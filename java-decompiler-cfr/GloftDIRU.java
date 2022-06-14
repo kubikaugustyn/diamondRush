@@ -3,8 +3,7 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-public final class GloftDIRU
-extends MIDlet {
+public final class GloftDIRU extends MIDlet {
     public static byte[] var_byte_arr_a;
     public i var_i_a;
     public Display var_javax_microedition_lcdui_Display_a;

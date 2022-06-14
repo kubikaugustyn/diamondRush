@@ -1,0 +1,1 @@
+java -jar cfr-0.152.jar diamondrush.jar --renamedupmembers true --renameenumidents true --renameillegalidents true >> output.txt
