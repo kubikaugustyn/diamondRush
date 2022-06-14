@@ -22,13 +22,14 @@
  *  limitations.
  */
 
-package javax.microedition.lcdui;
+// package javax.microedition.lcdui;
 
 
-public interface CommandListener
-{
+javax.microedition.lcdui.CommandListener = {// public interface CommandListener
+// {
 
 
-	void commandAction(Command c, Displayable d);
+    commandAction: function (c, d) {// void commandAction(Command c, Displayable d);
+    }
 
-}
+}// }

@@ -1,247 +1,211 @@
-/*
- * MicroEmulator
- * Copyright (C) 2001 Bartek Teodorczyk <barteo@barteo.net>
- *
- *  It is licensed under the following two licenses as alternatives:
- *    1. GNU Lesser General Public License (the "LGPL") version 2.1 or any newer version
- *    2. Apache License (the "AL") Version 2.0
- *
- *  You may not use this file except in compliance with at least one of
- *  the above two licenses.
- *
- *  You may obtain a copy of the LGPL at
- *      http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
- *
- *  You may obtain a copy of the AL at
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the LGPL or the AL for the specific language governing permissions and
- *  limitations.
- *
- * Contributor(s):
- *   3GLab
- *   Andres Navarro
- */
+// package javax.microedition.lcdui;
 
-package javax.microedition.lcdui;
-
-public class Graphics {
-	public static final int SOLID = 0;
-
-	public static final int DOTTED = 1;
-
-	public static final int LEFT = 4;
-
-	public static final int RIGHT = 8;
-
-	public static final int TOP = 16;
-
-	public static final int BASELINE = 64;
-
-	public static final int BOTTOM = 32;
-
-	public static final int HCENTER = 1;
-
-	public static final int VCENTER = 2;
-
-	int strokeStyle = SOLID;
-
-	int translateX = 0;
-
-	int translateY = 0;
-
-	public void clipRect(int x, int y, int width, int height) {
-		implementationError();
-	}
-
-	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-        implementationError();
+javax.microedition.lcdui.Graphics = class Graphics {// public class Graphics {
+    constructor() {
+        this.SOLID = 0// 	public static final int SOLID = 0;
+        this.DOTTED = 1// 	public static final int DOTTED = 1;
+        this.LEFT = 4// 	public static final int LEFT = 4;
+        this.RIGHT = 8// 	public static final int RIGHT = 8;
+        this.TOP = 16// 	public static final int TOP = 16;
+        this.BASELINE = 64// 	public static final int BASELINE = 64;
+        this.BOTTOM = 32// 	public static final int BOTTOM = 32;
+        this.HCENTER = 1// 	public static final int HCENTER = 1;
+        this.VCENTER = 2// 	public static final int VCENTER = 2;
+        this.strokeStyle = this.SOLID// 	int strokeStyle = SOLID;
+        this.translateX = 0// 	int translateX = 0;
+        this.translateY = 0// 	int translateY = 0;
     }
 
-	public void drawChar(char character, int x, int y, int anchor) {
-		char[] carr = new char[1];
-		carr[0] = character;
-		drawString(new String(carr), x, y, anchor);
-	}
+    clipRect(x, y, width, height) {// public void clipRect(int x, int y, int width, int height) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void drawChars(char[] data, int offset, int length, int x, int y, int anchor) {
-        drawString(new String(data, offset, length), x, y, anchor);
-    }
+    drawArc(x, y, width, height, startAngle, arcAngle) {// public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        this.implementationError()//     implementationError();
+    }// }
 
-	public void drawImage(Image img, int x, int y, int anchor) {
-		implementationError();
-	}
+    drawChar(character, x, y, anchor) {// public void drawChar(char character, int x, int y, int anchor) {
+        var carr = new JavaCharArr(1)// 	char[] carr = new char[1];
+        carr.setItem(0, character)// 	carr[0] = character;
+        this.drawString(new JavaString(carr), x, y, anchor)// 	drawString(new String(carr), x, y, anchor);
+    }// }
 
-	public void drawLine(int x1, int y1, int x2, int y2) {
-		implementationError();
-	}
+    drawChars(data, offset, length, x, y, anchor) {// public void drawChars(char[] data, int offset, int length, int x, int y, int anchor) {
+        this.drawString(new JavaString(data, offset, length), x, y, anchor)//     drawString(new String(data, offset, length), x, y, anchor);
+    }// }
 
-	public void drawRect(int x, int y, int width, int height) {
-		implementationError();
-	}
+    drawImage(img, x, y, anchor) {// public void drawImage(Image img, int x, int y, int anchor) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-        implementationError();
-    }
+    drawLine(x1, y1, x2, y2) {// public void drawLine(int x1, int y1, int x2, int y2) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void drawString(String str, int x, int y, int anchor) {
-		implementationError();
-	}
+    drawRect(x, y, width, height) {// public void drawRect(int x, int y, int width, int height) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void drawSubstring(String str, int offset, int len, int x, int y, int anchor) {
-        drawString(str.substring(offset, offset + len), x, y, anchor);
-    }
+    drawRoundRect(x, y, width, height, arcWidth, arcHeight) {// public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+        this.implementationError()//     implementationError();
+    }// }
 
-    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
-        implementationError();
-    }
+    drawString(str, x, y, anchor) {// public void drawString(String str, int x, int y, int anchor) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void fillRect(int x, int y, int width, int height) {
-		implementationError();
-	}
+    drawSubstring(str, offset, len, x, y, anchor) {// public void drawSubstring(String str, int offset, int len, int x, int y, int anchor) {
+        this.drawString(str.slice(offset, offset + len), x, y, anchor)//     drawString(str.substring(offset, offset + len), x, y, anchor);
+    }// }
 
-	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
-        implementationError();
-    }
+    fillArc(x, y, width, height, startAngle, arcAngle) {// public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        this.implementationError()//     implementationError();
+    }// }
 
-	public int getBlueComponent() {
-		return getColor() & 255;
-	}
+    fillRect(x, y, width, height) {// public void fillRect(int x, int y, int width, int height) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public int getClipHeight() {
-		implementationError();
+    fillRoundRect(x, y, width, height, arcWidth, arcHeight) {// public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+        this.implementationError()//     implementationError();
+    }// }
 
-		return -1;
-	}
+    getBlueComponent() {// public int getBlueComponent() {
+        return this.getColor() & 255// 	return getColor() & 255;
+    }// }
 
-	public int getClipWidth() {
-		implementationError();
+    getClipHeight() {// public int getClipHeight() {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-		return -1;
-	}
+    getClipWidth() {// public int getClipWidth() {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-	public int getClipX() {
-		implementationError();
+    getClipX() {// public int getClipX() {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-		return -1;
-	}
+    getClipY() {// public int getClipY() {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-	public int getClipY() {
-		implementationError();
+    getColor() {// public int getColor() {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-		return -1;
-	}
+    getFont() {// public Font getFont() {
+        this.implementationError()// 	implementationError();
+        //
+        return null// 	return null;
+    }// }
 
-	public int getColor() {
-		implementationError();
+    getGrayScale() {// public int getGrayScale() {
+        return (this.getRedComponent() + this.getGreenComponent() + this.getBlueComponent()) / 3// 	return (getRedComponent() + getGreenComponent() + getBlueComponent()) / 3;
+    }// }
 
-		return -1;
-	}
+    getGreenComponent() {// public int getGreenComponent() {
+        return (this.getColor() >> 8) & 255// 	return (getColor() >> 8) & 255;
+    }// }
 
-	public Font getFont() {
-		implementationError();
+    getRedComponent() {// public int getRedComponent() {
+        return (this.getColor() >> 16) & 255// 	return (getColor() >> 16) & 255;
+    }// }
 
-		return null;
-	}
+    getStrokeStyle() {// public int getStrokeStyle() {
+        return this.strokeStyle// 	return strokeStyle;
+    }// }
 
-	public int getGrayScale() {
-		return (getRedComponent() + getGreenComponent() + getBlueComponent()) / 3;
-	}
+    getTranslateX() {// public int getTranslateX() {
+        return this.translateX// 	return translateX;
+    }// }
 
-	public int getGreenComponent() {
-		return (getColor() >> 8) & 255;
-	}
+    getTranslateY() {// public int getTranslateY() {
+        return this.translateY// 	return translateY;
+    }// }
 
-	public int getRedComponent() {
-		return (getColor() >> 16) & 255;
-	}
+    setClip(x, y, width, height) {// public void setClip(int x, int y, int width, int height) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public int getStrokeStyle() {
-		return strokeStyle;
-	}
+    setColor(...args) {// public void setColor(int RGB) {
+        if (args.length === 1) this.implementationError()// 	implementationError();
+        // }
 
-	public int getTranslateX() {
-		return translateX;
-	}
+        else if (args.length === 3) {// public void setColor(int red, int green, int blue) {
+            var rgb = args[2]// 	int rgb = blue; // 0XRRGGBB
+            rgb += args[1] << 8// 	rgb += green << 8;
+            rgb += args[0] << 16// 	rgb += red << 16;
+            this.setColor(rgb)// 	setColor(rgb);
+        }
+    }// }
 
-	public int getTranslateY() {
-		return translateY;
-	}
+    setFont(font) {// public void setFont(Font font) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void setClip(int x, int y, int width, int height) {
-		implementationError();
-	}
+    setGrayScale(grey) {// public void setGrayScale(int grey) {
+        if (grey < 0 || grey > 255) {// 	if (grey < 0 || grey > 255) {
+            throw new IllegalArgumentException()// 		throw new IllegalArgumentException();
+        }// 	}
+        this.setColor(grey, grey, grey)// 	setColor(grey, grey, grey);
+    }// }
 
-	public void setColor(int RGB) {
-		implementationError();
-	}
+    setStrokeStyle(style) {// public void setStrokeStyle(int style) {
+        if (style !== this.SOLID && style !== this.DOTTED) {// 	if (style != SOLID && style != DOTTED) {
+            throw new IllegalArgumentException()// 		throw new IllegalArgumentException();
+        }// 	}
+        this.strokeStyle = style// 	strokeStyle = style;
+    }// }
 
-	public void setColor(int red, int green, int blue) {
-		int rgb = blue; // 0XRRGGBB
-		rgb += green << 8;
-		rgb += red << 16;
-		setColor(rgb);
-	}
+    translate(x, y) {// public void translate(int x, int y) {
+        this.translateX += x// 	translateX += x;
+        this.translateY += y// 	translateY += y;
+    }// }
 
-	public void setFont(Font font) {
-		implementationError();
-	}
+    // MIDP2
 
-	public void setGrayScale(int grey) {
-		if (grey < 0 || grey > 255) {
-			throw new IllegalArgumentException();
-		}
-		setColor(grey, grey, grey);
-	}
+    drawRegion(src, x_src, y_src, width, height, tranform, x_dst, y_dst, anchor) {// public void drawRegion(Image src, int x_src, int y_src, int width,
+        // 		int height, int transform, int x_dst, int y_dst, int anchor) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void setStrokeStyle(int style) {
-		if (style != SOLID && style != DOTTED) {
-			throw new IllegalArgumentException();
-		}
-		strokeStyle = style;
-	}
+    drawRGB(rgbData, offset, scanlength, x, y, width, height, processAlpha) {// public void drawRGB(int[] rgbData, int offset, int scanlength, int x,
+        // 		int y, int width, int height, boolean processAlpha) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void translate(int x, int y) {
-		translateX += x;
-		translateY += y;
-	}
+    fillTriangle(x1, y1, x2, y2, x3, y3) {// public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	// MIDP2
+    copyArea(x_src, y_src, width, height, x_dest, y_dest, anchor) {// public void copyArea(int x_src, int y_src, int width, int height,
+        // 		int x_dest, int y_dest, int anchor) {
+        this.implementationError()// 	implementationError();
+    }// }
 
-	public void drawRegion(Image src, int x_src, int y_src, int width,
-			int height, int transform, int x_dst, int y_dst, int anchor) {
-		implementationError();
-	}
+    getDisplayColor(color) {// public int getDisplayColor(int color) {
+        this.implementationError()// 	implementationError();
+        //
+        return -1// 	return -1;
+    }// }
 
-	public void drawRGB(int[] rgbData, int offset, int scanlength, int x,
-			int y, int width, int height, boolean processAlpha) {
-		implementationError();
-	}
+    implementationError() {// private void implementationError() {
+        try {// 	try {
+            throw new RuntimeException("Must be implemented in DisplayGraphics")// 		throw new RuntimeException("Must be implemented in DisplayGraphics");
+        } catch (ex) {// 	} catch (RuntimeException ex) {
+            console.error("Stack trace", ex)// 		ex.printStackTrace();
+        }// 	}
+    }// }
 
-	public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
-		implementationError();
-	}
-
-	public void copyArea(int x_src, int y_src, int width, int height,
-			int x_dest, int y_dest, int anchor) {
-		implementationError();
-	}
-
-	public int getDisplayColor(int color) {
-		implementationError();
-
-		return -1;
-	}
-
-	private void implementationError() {
-		try {
-			throw new RuntimeException("Must be implemented in DisplayGraphics");
-		} catch (RuntimeException ex) {
-			ex.printStackTrace();
-		}
-	}
-
-}
+}// }

@@ -35,6 +35,10 @@ var javax = {
         lcdui: {
             AlertType: U,
             Choice: U,
+            CommandListener: U,
+            Graphics: U,
+            ItemCommandListener: U,
+            ItemStateListener: U,
         }
     }
 }

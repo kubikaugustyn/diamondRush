@@ -1,7 +1,7 @@
 // package javax.microedition.lcdui;
 
 
-javax.microedition.lcdui.AlertType = {// public cls AlertType {
+javax.microedition.lcdui.AlertType = {// public class AlertType {
     cls: class {
         constructor() {
             // for (var key of Object.keys(javax.microedition.lcdui.AlertType).filter()) this[key] = javax.microedition.lcdui.AlertType[key]
