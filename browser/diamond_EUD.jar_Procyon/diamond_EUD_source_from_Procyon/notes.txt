@@ -1,0 +1,6 @@
+f.e = new byte[256] loaded from file "mc"
+j.a = new byte[168] loaded from file "snd.f" with 1L skipped bytes ???
+i.f = Image
+i.b = Image[33][]
+i.a = Image[2][]
+i.paint() does something with file "ms.f"
