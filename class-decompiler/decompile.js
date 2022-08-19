@@ -134,31 +134,63 @@ class Constant {
 
 class AccessFlag {
     constructor(value) {
-        this.value = value
+        this.value = "Undefined value!"
         this.text = "Undefined flag!"
         this.description = "Undefined flag description!"
-        switch (value) {
-            case 0x0001:
-                this.text = "public"
-                this.description = "Declared public; may be accessed from outside its package."
+        this.values = [0x0001, 0x0010, 0x0020, 0x0200, 0x0400]
+    }
+
+    getFlag(value) {
+        for (var val of [...this.values].reverse()) {
+            if (val <= value) {
+                value -= val
+                this.value = val
+                switch (this.values.indexOf(val)) {
+                    case 0:
+                        this.text = "public"
+                        this.description = "Declared public; may be accessed from outside its package."
+                        break
+                    case 1:
+                        this.text = "final"
+                        this.description = "Declared final; no subclasses allowed."
+                        break
+                    case 2:
+                        this.text = "super"
+                        this.description = "Treat superclass methods specially when invoked by the invokespecial instruction."
+                        break
+                    case 3:
+                        this.text = "interface"
+                        this.description = "Is an interface, not a class."
+                        break
+                    case 4:
+                        this.text = "abstract"
+                        this.description = "Declared abstract; may not be instantiated."
+                        break
+                }
                 break
-            case 0x0010:
-                this.text = "final"
-                this.description = "Declared final; no subclasses allowed."
-                break
-            case 0x0020:
-                this.text = "super"
-                this.description = "Treat superclass methods specially when invoked by the invokespecial instruction."
-                break
-            case 0x02000:
-                this.text = "interface"
-                this.description = "Is an interface, not a class."
-                break
-            case 0x0400:
-                this.text = "abstract"
-                this.description = "Declared abstract; may not be instantiated."
-                break
+            }
         }
+        return value
+    }
+}
+
+class AccessFlags {
+    constructor(value) {
+        this.value = value
+        this.access_flags = []
+        var flagValue = 0 + value
+        while (flagValue > 0) {
+            var flag = new AccessFlag()
+            flagValue = flag.getFlag(flagValue)
+            this.access_flags.push(flag)
+        }
+        this.access_flags.reverse()
+    }
+
+    getFlagProps(key) {
+        var props = []
+        for (var flag of this.access_flags) props.push(flag[key])
+        return props
     }
 }
 
@@ -175,7 +207,7 @@ class Field {
     }
 
     getInfo(binaryArray, constantPoolTable) {
-        this.access_flags = new AccessFlag(hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()])))
+        this.access_flags = new AccessFlags(hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()])))
         this.name_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
         this.name = constantPoolTable[this.name_index - 1].toString()
         this.descriptor_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
@@ -250,8 +282,10 @@ function decompile(binary) {
         return constantPoolTable[hex2num(hex.split(" ")) - 1]
     }
 
-    var [accessFlags, bitmask] = bin2dec([binary.shift(), binary.shift()])
-    console.log("Access flags:", new AccessFlag(parseInt(accessFlags)), "Bitmask:", bitmask)
+    // var [accessFlags, bitmask] = bin2dec([binary.shift(), binary.shift()])
+    // console.log("Access flags:", accessFlags,new AccessFlags(parseInt(accessFlags)), "Bitmask:", bitmask)
+    var accessFlags = new AccessFlags(hex2num(bin2hex([binary.shift(), binary.shift()])))
+    console.log("Access flags:", accessFlags.getFlagProps("text").join(" "), accessFlags)
     var thisClassIndex = hex2num(bin2hex([binary.shift(), binary.shift()]))
     console.log("This class:", thisClassIndex, getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString())
     var superClassIndex = hex2num(bin2hex([binary.shift(), binary.shift()]))
@@ -376,7 +410,7 @@ function decompile(binary) {
     }
 
     var extendedClass = importClass(getConstant(constantPoolTable[superClassIndex - 1].values[0]).toString())
-    code += `public final class ${getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString()} extends ${extendedClass} {\n`
+    code += `${accessFlags.getFlagProps("text").join(" ")} class ${getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString()} extends ${extendedClass} {\n`
     try {
         for (var f of fieldPoolTable) {
             var a = nameField(f)

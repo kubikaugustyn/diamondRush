@@ -169,7 +169,7 @@ function load(file, callback) {
 function onLoad(arr, hex, string, file) {
     console.groupCollapsed("Textures: " + file)
     hexes.push(hex.split(" "))
-    console.log(hex.slice(0, 256))
+    console.log(hex.slice(0, 1024))
     console.log(string.length)
     console.groupEnd()
     if (file === "2.f") {

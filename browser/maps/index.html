@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diamond Rush Maps</title>
+    <script src="https://kuba-apis.web.app/js/myquery/1.0.0/myquery.js"></script>
+    <script src="https://kubovy-hry.web.app/src/js/game/CanvasEngine2D.js"></script>
+    <script src="index.js" defer></script>
+</head>
+<body style="margin: 0">
+<img src="angkor.png" style="display: none" id="map">
+<div style="display: inline-flex; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border: 1px solid black">
+    <form id="map_form" style="width: max-content;">
+        <fieldset>
+            <legend>Choose map</legend>
+            <input type="radio" value="map_angkor.out" name="file" checked> Angkor Wat<br>
+            <input type="radio" value="map_scotland.out" name="file"> Bavaria<br>
+            <input type="radio" value="map_tibet.out" name="file"> Siberia<br>
+            <input type="submit" value="Load">
+        </fieldset>
+    </form>
+    <canvas id="canvas"></canvas>
+</div>
+</body>
+</html>
