@@ -61,7 +61,7 @@ class Texts {
 
     createTable(targetTable) {
         var i = 0
-        targetTable.innerHTML = "<tr><th>Index</th><th>Size</th><th >Text</th></th>"
+        targetTable.innerHTML = "<tr><th>Index</th><th>Size</th><th>Text</th></th>"
         for (var text of this.texts) {
             var tr = document.createElement("tr")
             var td = document.createElement("td")
