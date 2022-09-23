@@ -5,8 +5,14 @@
     <title>Diamond Rush All files</title>
     <script src="https://kuba-apis.web.app/js/myquery/1.0.0/myquery.js"></script>
     <script src="https://kubovy-hry.web.app/src/js/game/CanvasEngine2D.js"></script>
-    <script src="Textures.js"></script>
-    <script src="Texts.js"></script>
+    <script src="DiamondTextures.js"></script>
+    <!--<script src="Texts.js"></script>-->
+    <script src="DiamondFile.js"></script>
+    <script src="DiamondChunks.js"></script>
+    <script src="DiamondMap.js"></script>
+    <script src="DiamondStages.js"></script>
+    <script src="DiamondTexts.js"></script>
+    <script src="DiamondPng.js"></script>
     <script src="index.js" defer></script>
     <style>
         tr, td, th {
@@ -35,9 +41,13 @@
         <legend>Choose file</legend>
         <fieldset>
             <legend>Choose file main type</legend>
+            Will be used only if file<br>
+            main type was not defined in program.<br>
             <input type="radio" value="chunks" name="file_main_type" checked> Chunks<br>
             <input type="radio" value="map" name="file_main_type"> Map<br>
-            <input type="radio" value="texts" name="file_main_type"> Texts
+            <input type="radio" value="stages" name="file_main_type"> Stages<br>
+            <input type="radio" value="texts" name="file_main_type"> Texts<br>
+            <input type="radio" value="png" name="file_main_type"> PNG
         </fieldset>
         <input id="submit" type="submit" value="Load">
         <div id="files">Wait...</div>

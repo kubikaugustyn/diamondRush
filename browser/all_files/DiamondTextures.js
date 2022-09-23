@@ -1,6 +1,6 @@
 var __author__ = "kubik.augustyn@post.cz"
 
-class Textures {
+class DiamondTextures {
     constructor() {
         this.palette = []
         this.textures = []
@@ -14,7 +14,7 @@ class Textures {
     setCount(count) {
         this.count = count
         this.textures = []
-        for (var i = 0; i < count; i++) this.textures.push(new Texture())
+        for (var i = 0; i < count; i++) this.textures.push(new DiamondTexture())
     }
 
     setDimensions(array) {
@@ -51,7 +51,7 @@ class Textures {
     }
 }
 
-class Texture {
+class DiamondTexture {
     constructor() {
         this.width = 0
         this.height = 0
