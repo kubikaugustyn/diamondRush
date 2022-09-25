@@ -279,7 +279,6 @@ class DiamondStage {
             }
             this.layers[layer] = data
         }
-        console.groupEnd()
     }
 
     getLayerBlock(layer, x, y) {
@@ -291,7 +290,7 @@ class DiamondStage {
     }
 
     render(log = false) {
-        log && console.group("Render")
+        log && console.groupCollapsed("Render")
         log && console.log("Width:", this.width)
         log && console.log("Height:", this.height)
         log && console.log("Div:", this.div)
@@ -348,18 +347,24 @@ class DiamondStages extends DiamondFile {
     parse(dec, container) {
         this.stages = []
         console.group("Parse stages!")
-        console.log("Nonsense bytes:", dec.shiftTimes(2))
-        while (dec.length) {
-            var w = arr2smallEndian(dec.shiftTimes(2))
-            var h = arr2smallEndian(dec.shiftTimes(2))
-            var length = w * h * 3
-            var stage = new DiamondStage(dec.shiftTimes(length), w, h)
-            var h1 = document.createElement("h1")
-            h1.innerHTML = `Stage ${this.stages.length}`
-            stage.render(!this.stages.length)
-            container.appendChild(h1)
-            container.appendChild(stage.div)
-            this.stages.push(stage)
+        // console.log("Nonsense bytes:", dec.shiftTimes(2))
+        if (dec.shift() === 1) {
+            var num_stages = dec.shift()
+            container.innerHTML = `This stages file contains ${num_stages} stages.`
+            for (var i = 0; i < num_stages; i++) {
+                var w = arr2smallEndian(dec.shiftTimes(2))
+                var h = arr2smallEndian(dec.shiftTimes(2))
+                var length = w * h * 3
+                var stage = new DiamondStage(dec.shiftTimes(length), w, h)
+                var h1 = document.createElement("h1")
+                h1.innerHTML = `Stage ${this.stages.length}`
+                stage.render(!this.stages.length)
+                container.appendChild(h1)
+                container.appendChild(stage.div)
+                this.stages.push(stage)
+            }
+        } else {
+            container.innerHTML = "You probably didn't choose right file main type, because this absolutely isn't stages file."
         }
         console.groupEnd()
     }

@@ -11,18 +11,18 @@ var files_list = {
     "0.f": FILE_CHUNKS,
     "1.f": FILE_CHUNKS,
     "2.f": FILE_CHUNKS,
-    "b0.f": FILE_UNDEFINED,
-    "b1.f": FILE_UNDEFINED,
-    "cm.f": FILE_UNDEFINED,
-    "cr.f": FILE_UNDEFINED,
+    "b0.f": FILE_CHUNKS,
+    "b1.f": FILE_CHUNKS,
+    "cm.f": FILE_CHUNKS,
+    "cr.f": FILE_CHUNKS,
     "demo.f": FILE_UNDEFINED,
     "demoSpr.bin": FILE_UNDEFINED,
-    "demoui.f": FILE_UNDEFINED,
-    "gen0.f": FILE_UNDEFINED,
-    "gen1.f": FILE_UNDEFINED,
-    "gen2.f": FILE_UNDEFINED,
-    "gen3.f": FILE_UNDEFINED,
-    "gen4.f": FILE_UNDEFINED,
+    "demoui.f": FILE_CHUNKS,
+    "gen0.f": FILE_CHUNKS,
+    "gen1.f": FILE_CHUNKS,
+    "gen2.f": FILE_CHUNKS,
+    "gen3.f": FILE_CHUNKS,
+    "gen4.f": FILE_CHUNKS,
     "icon.png": FILE_PNG,
     "lang.bs-BA": FILE_TEXTS,
     "lang.cs-CZ": FILE_TEXTS,
@@ -43,27 +43,28 @@ var files_list = {
     "map_scotland.out": FILE_MAP,
     "map_tibet.out": FILE_MAP,
     "mc": FILE_UNDEFINED,
-    "mm0.f": FILE_UNDEFINED,
-    "mm1.f": FILE_UNDEFINED,
-    "mmv.f": FILE_UNDEFINED,
-    "ms.f": FILE_UNDEFINED,
-    "o.f": FILE_UNDEFINED,
+    "mm0.f": FILE_CHUNKS,
+    "mm1.f": FILE_CHUNKS,
+    "mmv.f": FILE_CHUNKS,
+    "ms.f": FILE_CHUNKS,
+    "o.f": FILE_CHUNKS,
     "snd.amr": FILE_UNDEFINED,
     "snd.f": FILE_CHUNKS,
     "spl.f": FILE_CHUNKS,
-    "tips.f": FILE_UNDEFINED,
+    "tips.f": FILE_CHUNKS,
     "tipst.f": FILE_UNDEFINED,
     "ui.f": FILE_CHUNKS,
     "w0.bin": FILE_STAGES,
     "w1.bin": FILE_STAGES,
     "w2.bin": FILE_STAGES
 }
+var checked_file_i = parseInt(localStorage.getItem("diamondRush-all_files-file_index") || 0)
 // var checked_file_i = 0
 // var checked_file_i = 41
 // var checked_file_i = 42
 // var checked_file_i = 30
 // var checked_file_i = 15
-var checked_file_i = 46
+// var checked_file_i = 46
 var currentFileName = Object.keys(files_list)[checked_file_i]
 
 function ge(id) {
@@ -79,7 +80,7 @@ function arr2smallEndian(arr) {
 }
 
 function arr2bigEndian(arr) {
-    return arr2smallEndian(arr.reverse())
+    return arr2smallEndian([...arr].reverse())
 }
 
 function dec2hex_str(dec) {
@@ -128,7 +129,7 @@ function init() {
         (file, index) => {
             var [fileName, fileClass] = file
             files_list[fileName] = new fileClass(fileName)
-            return `<input type="radio" value="${fileName}" name="file"${index === checked_file_i ? " checked" : ""}> ${fileName}<br>`
+            return `<label><input type="radio" value="${fileName}" name="file"${index === checked_file_i ? " checked" : ""}>${fileName}</label><br>`
         }
     ).join("")
 
@@ -138,15 +139,20 @@ function init() {
 function loadFile(e) {
     e.preventDefault()
     console.log(e)
-    var file = new Array(...document.getElementsByName("file")).filter(a => a.checked)[0].value
-    if (!file) return false
+    var inputs = new Array(...document.getElementsByName("file")).filter(a => a.checked)
+    if (!inputs.length) return false
+    var file = inputs[0].value
+    var i = Object.keys(files_list).indexOf(file)
+    if (!file || i < 0) return false
+    checked_file_i = i
     currentFileName = file
+    localStorage.setItem("diamondRush-all_files-file_index", i)
     $$.Data.httpBinary("../diamond_EUD.jar/" + file, parseFile)
 }
 
 function parseFile(binary, e) {
     var dec = binary.map(a => parseInt(a, 2))
-    console.log(dec)
+    console.log("Parse file:", dec)
     var file_main_type = new Array(...document.getElementsByName("file_main_type")).filter(a => a.checked)[0].value
     var r = ge("result")
     r.innerHTML = ""

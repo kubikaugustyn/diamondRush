@@ -9,7 +9,7 @@ function arr2smallEndian(arr) {
 }
 
 function arr2bigEndian(arr) {
-    return arr2smallEndian(arr.reverse())
+    return arr2smallEndian([...arr].reverse())
 }
 
 Array.prototype.shiftTimes = function (num) {
@@ -52,17 +52,14 @@ class DiamondChunks extends DiamondFile {
             try {
                 var c = new Array(...chunk)
                 if (c.joinPart(" ", 0, 6) === "223 3 1 1 1 1") {// df 03 01 01 01 01 - Texture file
-                    h1.innerHTML += "Texture"
+                    h1.innerHTML += "Textures"
                     c.shiftTimes(6)
-                    var num_textures = arr2smallEndian(c.shiftTimes(2))
-                    console.log("Number of textures:", num_textures)
-                    var textures = new DiamondTextures()
-                    textures.setCount(num_textures)
-                    textures.setDimensions(c.shiftTimes(num_textures * 2))
-                    console.log("Remaining data:", c, c.join(" "))
+                    var textures = new DiamondTextures(c)
+                    textures.setScale(5)
+                    textures.render(chunkDiv)
                     console.log("Textures:", textures)
-                    r.innerHTML += "Textures were not fully documented yet and cannot be parsed right now.<br>"
-                    r.innerHTML += "But I found out where is the 16-color palette stored and dimension of textures and also encoding of pixels, but some bytes still doesn't make sense for me."
+                    // r.innerHTML += "Textures were not fully documented yet and cannot be parsed right now.<br>"
+                    // r.innerHTML += "But I found out where is the 16-color palette stored and dimension of textures and also encoding of pixels, but some bytes still doesn't make sense for me."
                 } else if (c.joinPart(" ", 0, 4) === "77 84 104 100") {// MThd = .MID file
                     h1.innerHTML += "MID sound file"
                     /* chunkDiv.innerHTML = `<audio controls>
@@ -109,8 +106,9 @@ class DiamondChunks extends DiamondFile {
                     var png = new DiamondPng(`image${i}.png`)
                     png.parse(c, chunkDiv)
                 } else {
-                    h1.innerHTML += "Not recognized"
-                    r.removeChild(chunkDiv)
+                    h1.innerHTML += "Not recognized, probably text"
+                    // r.removeChild(chunkDiv)
+                    chunkDiv.innerHTML = c.join(", ") + "<hr>" + c.map(a => String.fromCharCode(a)).join("")
                 }
             } catch (e) {
                 h1.innerHTML += " - Error"
@@ -120,6 +118,6 @@ class DiamondChunks extends DiamondFile {
 
             chunks.push(chunk)
         }
-        console.log(chunks)
+        // console.log(chunks)
     }
 }

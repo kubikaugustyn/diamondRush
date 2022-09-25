@@ -17,6 +17,6 @@ class DiamondFile {
     }
 
     parse(dec, container) {
-        container.innerHTML = dec.join(", ")
+        container.innerHTML += dec.join(", ")
     }
 }

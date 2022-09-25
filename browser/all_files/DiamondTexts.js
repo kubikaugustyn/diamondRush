@@ -2,7 +2,7 @@ var __author__ = "kubik.augustyn@post.cz"
 
 /////////////////////////////////////////////////
 function arr2bigEndian(arr) {
-    return arr2smallEndian(arr.reverse())
+    return arr2smallEndian([...arr].reverse())
 }
 
 function dec2hex_str(dec) {
