@@ -25,12 +25,6 @@ function decode_utf8(s) {
     return decodeURIComponent(escape(s));
 }
 
-Array.prototype.shiftTimes = function (num) {
-    var result = []
-    for (var i = 0; i < num; i++) result.push(this.shift())
-    return result
-}
-
 /////////////////////////////////////////////////
 
 class DiamondText {
@@ -52,17 +46,15 @@ class DiamondTexts extends DiamondFile {
 
     parseTexts(dec) {
         this.texts = []
-        var len_header = 256
-        var header = dec.shiftTimes(len_header)
-        console.log("Header:", header.join(" "))
+        var i = 0
         while (dec.length) {
-            var len = arr2bigEndian(dec.shiftTimes(2))
+            var index = arr2bigEndian(dec.slice(i, i + 2))
+            var len = arr2bigEndian(dec.slice(index, index + 2))
             var text = ""
-            for (var byte of dec.shiftTimes(len)) {
-                text += String.fromCharCode(byte)
-            }
+            for (var byte of dec.slice(index + 2, index + 2 + len)) text += String.fromCharCode(byte)
             if (text === "0") break
             this.texts.push(new DiamondText(text))
+            i += 2
         }
     }
 

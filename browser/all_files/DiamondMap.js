@@ -329,7 +329,7 @@ class DiamondMap extends DiamondFile {
 
         container.innerHTML = "<h1>Map</h1>"
         container.innerHTML += `Points: (${points.size})<br>`
-        container.innerHTML += `<table><tr>${["X", "Y", "Secret", "Path to secret", "Stage", "Paths"].map(a => `<th>${a}</th>`).join("")}</th>${new Array(...points.entries()).map(
+        container.innerHTML += `<table class="center"><tr>${["X", "Y", "Secret", "Path to secret", "Stage", "Paths"].map(a => `<th>${a}</th>`).join("")}</th>${new Array(...points.entries()).map(
             ([[x, y], point]) => {
                 return `<tr><td>${x}</td><td>${y}</td><td>${point.secret ? "Yes" : "No"}</td><td>${point.goingToSecret ? "Yes" : "No"}</td><td>${point.stageID + 1}</td><td>${point.paths.map((path) => `X: ${path.getTo()[0]} Y: ${path.getTo()[1]}`).join(", ")}</td></tr>`
             }
