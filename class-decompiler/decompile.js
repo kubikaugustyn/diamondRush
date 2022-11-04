@@ -161,13 +161,79 @@ class AccessFlagKind {
         ACC_STRICT	0x0800	Declared strictfp; floating-point mode is FP-strict.
         ACC_SYNTHETIC	0x1000	Declared synthetic; not present in the source code.
         */
-        if (val && 0x0000) return new AccessFlag()
+        if (val & 0x0000) return new AccessFlag()
     }
 }
 
 class AccessFlagKindPublic extends AccessFlagKind {
     get(val) {
-        if (val && 0x0001) return new AccessFlag("public", "Declared public; may be accessed from outside its package.")
+        if (val & 0x0001) return new AccessFlag("public", "Declared public; may be accessed from outside its package.")
+    }
+}
+
+class AccessFlagKindPrivate extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0002) return new AccessFlag("private", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindProtected extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0004) return new AccessFlag("protected", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindStatic extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0008) return new AccessFlag("static", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindFinal extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0010) return new AccessFlag("final", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindSynchronized extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0020) return new AccessFlag("synchronized", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindBridge extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0040) return new AccessFlag("bridge", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindVarArgs extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0080) return new AccessFlag("varargs", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindNative extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0100) return new AccessFlag("native", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindAbstract extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0400) return new AccessFlag("abstract", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindStrict extends AccessFlagKind {
+    get(val) {
+        if (val & 0x0800) return new AccessFlag("strict", "Declared private; accessible only within the defining class.")
+    }
+}
+
+class AccessFlagKindSynthetic extends AccessFlagKind {
+    get(val) {
+        if (val & 0x1000) return new AccessFlag("synthetic", "Declared private; accessible only within the defining class.")
     }
 }
 
@@ -175,8 +241,7 @@ class AccessFlagKindPublic extends AccessFlagKind {
 class AccessFlags {
     constructor(value) {
         this.value = value
-        this.values = [0x0001, 0x0010, 0x0020, 0x0200, 0x0400]
-        this.flags = []
+        this.flag_kinds = [AccessFlagKindPublic, AccessFlagKindPrivate, AccessFlagKindProtected, AccessFlagKindStatic, AccessFlagKindFinal, AccessFlagKindSynchronized, AccessFlagKindBridge, AccessFlagKindVarArgs, AccessFlagKindNative, AccessFlagKindAbstract, AccessFlagKindStrict, AccessFlagKindSynthetic]
         this.access_flags = this.getFlags()
     }
 
@@ -188,33 +253,9 @@ class AccessFlags {
 
     getFlags() {
         var flags = []
-        for (var i = 0; i < this.values.length; i++) {
-            if ((this.value & this.values[i]) > 0) {
-                var flag = new AccessFlag()
-                switch (i) {
-                    case 0:
-                        flag.text = "public"
-                        flag.description = "Declared public; may be accessed from outside its package."
-                        break
-                    case 1:
-                        flag.text = "final"
-                        flag.description = "Declared final; no subclasses allowed."
-                        break
-                    case 2:
-                        flag.text = "super"
-                        flag.description = "Treat superclass methods specially when invoked by the invokespecial instruction."
-                        break
-                    case 3:
-                        flag.text = "interface"
-                        flag.description = "Is an interface, not a class."
-                        break
-                    case 4:
-                        flag.text = "abstract"
-                        flag.description = "Declared abstract; may not be instantiated."
-                        break
-                }
-                flags.push(flag)
-            }
+        for (var flag_kind of this.flag_kinds) {
+            var flag = flag_kind.prototype.get(this.value)
+            if (flag) flags.push(flag)
         }
         return flags
     }
@@ -235,9 +276,9 @@ class Field {
     getInfo(binaryArray, constantPoolTable) {
         this.access_flags = new AccessFlags(hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()])))
         this.name_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
-        this.name = constantPoolTable[this.name_index - 1].toString()
+        this.name = constantPoolTable[this.name_index - 1]?.toString()
         this.descriptor_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
-        this.descriptor = constantPoolTable[this.descriptor_index - 1].toString()
+        this.descriptor = constantPoolTable[this.descriptor_index - 1]?.toString()
         this.attributes_count = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
         for (var i = 0; i < this.attributes_count; i++) {
             var attribute = new Attribute()
@@ -263,7 +304,7 @@ class Attribute {
 
     getInfo(binaryArray, constantPoolTable) {
         this.attribute_name_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
-        this.attribute_name = constantPoolTable[this.attribute_name_index].toString()
+        this.attribute_name = constantPoolTable[this.attribute_name_index]?.toString()
         this.attribute_length = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift(), binaryArray.shift(), binaryArray.shift()]))
         for (var i = 0; i < this.attribute_length; i++) {
             var hex = bin2hex([binaryArray.shift()])[0]
@@ -311,11 +352,11 @@ function decompile(binary) {
     // var [accessFlags, bitmask] = bin2dec([binary.shift(), binary.shift()])
     // console.log("Access flags:", accessFlags,new AccessFlags(parseInt(accessFlags)), "Bitmask:", bitmask)
     var accessFlags = new AccessFlags(hex2num(bin2hex([binary.shift(), binary.shift()])))
-    console.log("Access flags:", accessFlags.getFlagProps("text").join(" "), accessFlags)
+    console.log("Access flags:", accessFlags.getFlagProps("text")?.join(" "), accessFlags)
     var thisClassIndex = hex2num(bin2hex([binary.shift(), binary.shift()]))
-    console.log("This class:", thisClassIndex, getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString())
+    console.log("This class:", thisClassIndex, getConstant(constantPoolTable[thisClassIndex - 1].values[0])?.toString())
     var superClassIndex = hex2num(bin2hex([binary.shift(), binary.shift()]))
-    console.log("Super class:", superClassIndex, getConstant(constantPoolTable[superClassIndex - 1].values[0]).toString())
+    console.log("Super class:", superClassIndex, getConstant(constantPoolTable[superClassIndex - 1].values[0])?.toString())
 
     var interfacePoolCount = hex2num(bin2hex([binary.shift(), binary.shift()]))
     console.groupCollapsed("Count of interfaces:", interfacePoolCount)
@@ -366,7 +407,7 @@ function decompile(binary) {
     function importClass(name) {
         var packageName = name.split("/")
         var className = packageName.pop()
-        imports += `import ${packageName.join(".")}${packageName.length ? "." : ""}${className}\n`
+        imports += `import ${packageName.join(".")}${packageName.length ? "." : ""}${className};\n`
         return className
     }
 
@@ -383,66 +424,104 @@ function decompile(binary) {
     S	short	signed short
     Z	boolean	true or false
     [	reference	one array dimension
+
+    https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.3.3
+    VoidDescriptor: V
         */
-    function nameField(field) {
+    function nameField(descriptor, name) {
         var line = ""
-        console.log(field)
+        // console.log(field)
         // Parse descriptor
-        var arr = "", type = "", isClass = false
-        for (i = 0; i < field.descriptor.length; i++) {
-            var char = field.descriptor[i]
-            if (isClass) {
-                if (char === ";") type = importClass(type)
-                else type += char
-            } else {
-                switch (char) {
-                    case "[":
-                        arr += "[]"
-                        break
-                    case "B":
-                        type += "byte"
-                        break
-                    case "C":
-                        type += "char"
-                        break
-                    case "D":
-                        type += "double"
-                        break
-                    case "F":
-                        type += "float"
-                        break
-                    case "I":
-                        type += "int"
-                        break
-                    case "J":
-                        type += "long"
-                        break
-                    case "S":
-                        type += "short"
-                        break
-                    case "Z":
-                        type += "boolean"
-                        break
-                    case "L":
-                        isClass = true
-                        break
-                }
+        var arr = "", type = ""
+        while (descriptor.length) {
+            var char = descriptor.shift()
+            var exit = true
+            switch (char) {
+                case "[":
+                    arr += "[]"
+                    break
+                case "B":
+                    type += "byte"
+                    break
+                case "C":
+                    type += "char"
+                    break
+                case "D":
+                    type += "double"
+                    break
+                case "F":
+                    type += "float"
+                    break
+                case "I":
+                    type += "int"
+                    break
+                case "J":
+                    type += "long"
+                    break
+                case "S":
+                    type += "short"
+                    break
+                case "Z":
+                    type += "boolean"
+                    break
+                case "L":
+                    char = descriptor.shift()
+                    while (char !== ";" && descriptor.length) {
+                        type += char
+                        char = descriptor.shift()
+                    }
+                    break
+                case "V":
+                    type += "void"
+                    break
+                default:
+                    exit = false
+            }
+            if (exit) break
+        }
+        line += type + arr
+        // End
+        return [line, name, ";\n"]
+    }
+
+    function nameMethod(method) {
+        var returnType = ""
+        var parameters = []
+
+        // console.log(method.descriptor)
+        var descriptor = `${method.descriptor}`.split("")
+        var stage = "wait"
+        while (descriptor.length) {
+            var char = descriptor[0]
+            // console.log(descriptor, char)
+            if (char === "(") {
+                stage = "parameters"
+                descriptor.shift()
+            } else if (char === ")") {
+                stage = "return"
+                descriptor.shift()
+            } else if (stage === "parameters") {
+                // console.log(descriptor)
+                parameters.push(nameField(descriptor, "")[0])
+            } else if (stage === "return") {
+                returnType = nameField(descriptor, "")[0]
             }
         }
-        line += type + arr + " "
-        // End
-        line += field.name
-        return line + ";\n"
+        // console.log(returnType, parameters)
+
+        return [returnType, parameters]
     }
 
     var extendedClass = importClass(getConstant(constantPoolTable[superClassIndex - 1].values[0]).toString())
     code += `${accessFlags.getFlagProps("text").join(" ")} class ${getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString()} extends ${extendedClass} {\n`
     try {
+        var a, b, c
         for (var f of fieldPoolTable) {
-            var a = f.access_flags.getFlagProps("text").join(" ") + " " + nameField(f)
-            code += "\t" + a
+            a = nameField(f.descriptor.split(""), f.name)
+            b = f.access_flags.getFlagProps("text").join(" ") + " " + a[0] + " " + a[1] + a[2]
+            code += "\t" + b
         }
-        java += "\n"
+        code += "\n"
         /*for (var cs of constantPoolTable) {
             switch (cs.type.tag) {
                 case 7:// Class
@@ -461,6 +540,16 @@ function decompile(binary) {
                     break
             }
         }*/
+        for (var m of methodPoolTable) {
+            // console.log(m)
+            var [returnType, parameters] = nameMethod(m)
+            if (parameters.length === 0 && returnType === "void" && m.name === "<clinit>") {
+                code += "\tdefault static\n"
+                continue
+            }
+            b = `${m.access_flags.getFlagProps("text").join(" ")} ${returnType} ${m.name}(${parameters.join(", ")})`
+            code += `\t${b}\n`
+        }
     } catch (e) {
         console.log(e)
     }

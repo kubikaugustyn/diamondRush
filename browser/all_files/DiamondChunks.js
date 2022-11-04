@@ -66,7 +66,9 @@ class DiamondChunks extends DiamondFile {
                           <source src="data:audio/mid;base64,${btoa(c.map(a => String.fromCharCode(a)).join(""))}" type="audio/mid">
                         Your browser does not support the audio element.
                         </audio>` */
-                    chunkDiv.innerHTML = `<a href="data:audio/mid;base64,${btoa(c.toAscii())}" download="audio${i}.mid">Download this file</a>`
+                    chunkDiv.innerHTML = `<a href="data:audio/mid;base64,${btoa(c.toAscii())}" download="audio${i}.mid">Download this file</a><br>`
+                    console.log("MIDI base64:", btoa(c.toAscii()))
+                    chunkDiv.innerHTML += `<a target="_blank" href="../midi_explorer/index.html?file=${btoa(c.toAscii())}">Explore this file</a>`
                     chunkDiv.innerHTML += "<h1>MID file info</h1>"
                     var d = document.createElement("div")
                     chunkDiv.appendChild(d)
@@ -118,6 +120,6 @@ class DiamondChunks extends DiamondFile {
 
             chunks.push(chunk)
         }
-        // console.log(chunks)
+        console.log("Parsed chunks:", chunks)
     }
 }
