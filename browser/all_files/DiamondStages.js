@@ -45,9 +45,9 @@ class DiamondStage {
                 "Leaves"
             ],
             [
-                [80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116],
+                [80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146],
                 [20, 21, 22, 23, 117, 118, 119, 255],
-                [255],
+                [255, 0],
                 "yellow",
                 "Wall"
             ],
@@ -85,6 +85,13 @@ class DiamondStage {
                 [1, 2],
                 "#f54c4c",
                 "Red Snake"
+            ],
+            [
+                [49],
+                [255],
+                [1, 2],
+                "#0ee",
+                "Turtle"
             ],
             [
                 [22, 23],
@@ -130,14 +137,14 @@ class DiamondStage {
             ],
             [
                 [4],
-                [33],
+                [14, 33],
                 any,
                 "gold",
                 "Chest with gold key"
             ],
             [
                 [6],
-                [33],
+                [14, 33],
                 [255],
                 "red",
                 "Red chest with 1 Up"
@@ -255,6 +262,34 @@ class DiamondStage {
                 "Door"
             ],
             [
+                any,
+                [34],
+                [255],
+                "blue",
+                "Broken icicle"
+            ],
+            [
+                [44],
+                [255],
+                [255],
+                "cyan",
+                "Icicle"
+            ],
+            [
+                [38],
+                [255],
+                any,
+                "#005252",
+                "Sewer (any = number of water blocks to output)"
+            ],
+            [
+                any,
+                [17],
+                any,
+                "#ff9",
+                "Defeat everyone marker (marking block on top of it) - when marking entity (adds to list of entities to be defeated) or chest and doors (adds to list of blocks to be open / unlocked)"
+            ],
+            [
                 [255],
                 any,
                 [255],
@@ -271,7 +306,7 @@ class DiamondStage {
     }
 
     parse() {
-        var dec = new Array(...this.dec)
+        var dec = this.dec.slice()
         for (var layer of Object.keys(this.layers)) {
             var data = []
             for (var y = 0; y < this.height; y++) {
@@ -324,12 +359,12 @@ class DiamondStage {
                 ctx.fillRect(bx, by, bs, bs)
                 // ctx.stroke()
                 ctx.fillStyle = "black"
-                ctx.font = `${12}px Arial`
+                ctx.font = `${24 * (1 / s)}px Arial`
                 ctx.textBaseline = "top"
                 ctx.fillText(block, bx + s, by + s, bs)
                 if (data < 255) ctx.fillText(data, bx + s, by + 10 * s, bs)
                 if (specifying_data < 255) ctx.fillText(specifying_data, bx + s, by + 18 * s, bs)
-                log && console.log(`Block at X: ${x} Y: ${y} ID: ${block} ${data < 255 ? 'DATA: ' + data : ''} ${specifying_data < 255 ? 'SPECIFIED BY: ' + specifying_data : ''}`)
+                // log && console.log(`Block at X: ${x} Y: ${y} ID: ${block} ${data < 255 ? 'DATA: ' + data : ''} ${specifying_data < 255 ? 'SPECIFIED BY: ' + specifying_data : ''}`)
             }
         }
 
@@ -358,7 +393,8 @@ class DiamondStages extends DiamondFile {
                 var stage = new DiamondStage(dec.shiftTimes(length), w, h)
                 var h1 = document.createElement("h1")
                 h1.innerHTML = `Stage ${this.stages.length}`
-                stage.render(!this.stages.length)
+                // stage.render(!this.stages.length)
+                stage.render(true)
                 container.appendChild(h1)
                 container.appendChild(stage.div)
                 this.stages.push(stage)

@@ -8,6 +8,7 @@ FILE_PNG = DiamondPng
 FILE_UNDEFINED = DiamondFile
 
 var files_list = {
+    'testStage.bin': FILE_STAGES,
     "0.f": FILE_CHUNKS,
     "1.f": FILE_CHUNKS,
     "2.f": FILE_CHUNKS,
