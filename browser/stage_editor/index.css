@@ -18,4 +18,5 @@ fieldset {
 
 canvas{
     image-rendering: pixelated;
+    cursor: none;
 }

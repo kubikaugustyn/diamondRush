@@ -67,6 +67,7 @@ var checked_file_i = parseInt(localStorage.getItem("diamondRush-all_files-file_i
 // var checked_file_i = 15
 // var checked_file_i = 46
 var currentFileName = Object.keys(files_list)[checked_file_i]
+var currentFile = null
 
 function ge(id) {
     return document.getElementById(id)
@@ -184,6 +185,7 @@ function parseFile(binary, e) {
             r.innerHTML = "This file type is not implemented yet: " + file_main_type
         }
     }
+    currentFile = file
     /*switch (file_main_type) {
         case "chunks":
             break

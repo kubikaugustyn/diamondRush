@@ -15,10 +15,11 @@ Array.prototype.shiftTimes = function (num) {
 }
 
 class DiamondStage {
-    constructor(dec, width, height) {
+    constructor(dec, width, height, place) {
         this.dec = dec
         this.width = width
         this.height = height
+        this.place = place
         this.div = document.createElement("div")
 
         this.layers = {
@@ -26,6 +27,8 @@ class DiamondStage {
             specifying_data: [],
             data: []
         }
+        this.id = new Array(5).fill(0).map(() => Math.random().toString(36).slice(2)).join('-')
+        this.editorWindow = null
 
         var any = new Array(256).fill(0).map((_, i) => i)
 
@@ -330,6 +333,11 @@ class DiamondStage {
             this[method] = this[method].bind(this);
         })
 
+        window.addEventListener("message", (event) => {
+            if (event.origin !== document.location.origin) return
+            if (!this.editorWindow) return
+            this.onMessage(event.data)
+        }, false)
         this.parse()
     }
 
@@ -359,6 +367,11 @@ class DiamondStage {
         log && console.log("Div:", this.div)
 
         this.div.innerHTML = ""
+        var openButton = document.createElement('button')
+        openButton.innerHTML = 'Open in editor'
+        openButton.onclick = this.openInEditor
+        this.div.appendChild(openButton)
+        this.div.appendChild(document.createElement('br'))
         var canvas = document.createElement("canvas")
         var s = 2 // Scale
         var bs = 24 * s // Block size
@@ -398,6 +411,50 @@ class DiamondStage {
 
         log && console.groupEnd()
     }
+
+    openInEditor() {
+        // console.log('Open in editor:', this)
+        this.editorWindow = open('../stage_editor/?id='.concat(this.id))
+    }
+
+    sendMessage(msg) {
+        if (!this.editorWindow) return
+        this.editorWindow.postMessage({
+            msg,
+            id: this.id
+        }, document.location.origin)
+        console.log('Sent message:', msg)
+    }
+
+    onMessage(msg) {
+        console.log('Got message:', msg)
+        switch (msg) {
+            case 'ready':
+                this.sendMessage('ready')
+                break
+            case 'send-place':
+                console.log('Send Place!')
+                this.sendMessage(this.place)
+                break
+            case 'send-stage':
+                console.log('Send Stage!')
+                var blocks = []
+                for (var y = 0; y < this.height; y++) {
+                    var line = []
+                    for (var x = 0; x < this.width; x++) {
+                        var block = {
+                            back: this.layers.blocks[y][x],
+                            front: this.layers.data[y][x],
+                            data: this.layers.specifying_data[y][x]
+                        }
+                        line.push(block)
+                    }
+                    blocks.push(line)
+                }
+                this.sendMessage({w: this.width, h: this.height, blocks})
+                break
+        }
+    }
 }
 
 class DiamondStages extends DiamondFile {
@@ -405,6 +462,9 @@ class DiamondStages extends DiamondFile {
         this.fileType = "stages"
 
         this.stages = []
+        this.place = 'angkor'
+        if (this.fileName === 'w1.bin') this.place = 'bavaria'
+        else if (this.fileName === 'w2.bin') this.place = 'siberia'
     }
 
     parse(dec, container) {
@@ -418,7 +478,7 @@ class DiamondStages extends DiamondFile {
                 var w = arr2smallEndian(dec.shiftTimes(2))
                 var h = arr2smallEndian(dec.shiftTimes(2))
                 var length = w * h * 3
-                var stage = new DiamondStage(dec.shiftTimes(length), w, h)
+                var stage = new DiamondStage(dec.shiftTimes(length), w, h, this.place)
                 var h1 = document.createElement("h1")
                 h1.innerHTML = `Stage ${this.stages.length}`
                 // stage.render(!this.stages.length)
