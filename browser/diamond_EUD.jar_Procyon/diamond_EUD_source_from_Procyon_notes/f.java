@@ -7,7 +7,7 @@ import javax.microedition.lcdui.Image;
 
 public final class f
 {
-    private static int[] a;
+    private static int[] a; // int[4096]
     private byte[] f;
     private byte[] g;
     private short[] b;
@@ -27,6 +27,8 @@ public final class f
     public static byte[] e;
     
     public final void a(final byte[] array, int n) {
+        // byte[] array - chunk raw data - df 03 ...
+        // int n - 0
         try {
             System.gc();
             ++n;
@@ -34,19 +36,20 @@ public final class f
             ++n;
             ++n;
             ++n;
-            ++n;
+            ++n; // n = 6
             final int n2 = 6;
-            ++n;
-            final int n3 = array[n2] & 0xFF;
+            ++n; // n = 7
+            final int n3 = array[n2] & 0xFF; // n3 = 6
             final int n4 = 7;
-            ++n;
-            final short n5;
-            if ((n5 = (short)(n3 + ((array[n4] & 0xFF) << 8))) > 0) {
+            ++n;// n = 8
+            final short n5; // n5 = 0x00
+            if ((n5 = (short)(n3 + ((array[n4] & 0xFF) << 8))) > 0) { // In ui.f, chunk #4 (0-4), array[n4] = 0x00
                 System.arraycopy(array, 8, this.f = new byte[n5 << 1], 0, this.f.length);
                 n = 8 + this.f.length;
             }
-            final short n6;
-            if ((n6 = (short)((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) {
+            final short n6; // n6=28
+            // n=9
+            if ((n6 = (short)((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) { // 0x1C + 0x00<<8 = 28; n = 11
                 System.arraycopy(array, n, this.h = new byte[n6 << 2], 0, this.h.length);
                 n += this.h.length;
             }

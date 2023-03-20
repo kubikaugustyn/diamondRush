@@ -15854,7 +15854,11 @@ public final class i extends Canvas implements Runnable
     }
     
     private static f a(final String s, final int n, final int a, final int n2) {
-        f f = null;
+        // String s - texture filename (ui.f)
+        // int n - 4
+        // int a - 0
+        // int n2 - 0
+        f f = null; // probably the texture class
         try {
             f = new f();
             f.a(a(s, n), 0);
@@ -15908,14 +15912,14 @@ public final class i extends Canvas implements Runnable
         byte[] array = null;
         final InputStream resourceAsStream = name.getClass().getResourceAsStream(name);
         try {
-            array = new byte[resourceAsStream.read() << 3];
-            resourceAsStream.read(array);
-            final int b2 = b(array, b << 3);
-            b = b(array, (b << 3) + 4);
-            resourceAsStream.skip(b2);
-            array = new byte[b];
-            resourceAsStream.read(array);
-            resourceAsStream.close();
+            array = new byte[resourceAsStream.read() << 3]; // Inits array for address-length header
+            resourceAsStream.read(array); // Reads header
+            final int b2 = b(array, b << 3); // Calculates b-th chunk address
+            b = b(array, (b << 3) + 4); // Calculates b-th chunk length
+            resourceAsStream.skip(b2); // Skips to the b-th header
+            array = new byte[b]; // Inits array for chunk size
+            resourceAsStream.read(array); // Reads chunk
+            resourceAsStream.close(); // Closes the file
         }
         catch (Exception ex) {}
         return array;

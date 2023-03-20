@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Diamond Rush Class file field renamer</title>
+    <script src="ClassFactory.js" defer></script>
+    <script src="index.js" defer></script>
+    <style>
+        table, tr, td, th {
+            border: 1px solid black;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        #file_form {
+            width: max-content;
+        }
+
+        #result {
+
+        }
+
+        div#result {
+            border: 1px solid black;
+            margin: 2px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 1px;
+        }
+
+        .multicolor {
+            color: red;
+        }
+
+        .multicolor:nth-child(2) {
+            color: blue;
+        }
+
+        .value {
+            color: green;
+        }
+
+        .value .value {
+            color: rgb(0, 255, 0);
+        }
+
+        .flag {
+            color: rgb(0, 255, 255);
+        }
+    </style>
+</head>
+<body>
+<form id="file_load_form">
+    <fieldset>
+        <legend>Choose file</legend>
+        <input type="file" accept=".class" id="file_from"><br>
+        <input type="submit" value="Load">
+    </fieldset>
+</form>
+<div id="editor"><h1>Press load.</h1></div>
+<form id="file_save_form">
+    <fieldset>
+        <legend>Choose file to save</legend>
+        <input type="file" accept=".class" id="file_to"><br>
+        <input type="submit" value="Save">
+    </fieldset>
+</form>
+</body>
+</html>

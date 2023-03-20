@@ -51,9 +51,8 @@ class DiamondChunks extends DiamondFile {
             console.log("Decimal:", chunk)
             try {
                 var c = new Array(...chunk)
-                if (c.joinPart(" ", 0, 6) === "223 3 1 1 1 1") {// df 03 01 01 01 01 - Texture file
+                if (c[0] === 223) {// df (03 01 01 01 01) - Texture file
                     h1.innerHTML += "Textures"
-                    c.shiftTimes(6)
                     var textures = new DiamondTextures(c)
                     textures.setScale(5)
                     textures.render(chunkDiv)
@@ -113,6 +112,7 @@ class DiamondChunks extends DiamondFile {
                     chunkDiv.innerHTML = c.join(", ") + "<hr>" + c.map(a => String.fromCharCode(a)).join("")
                 }
             } catch (e) {
+                console.log(e)
                 h1.innerHTML += " - Error"
                 chunkDiv.innerHTML = "Error while parsing chunk: " + e
             }

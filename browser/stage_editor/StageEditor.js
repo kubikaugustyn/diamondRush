@@ -64,7 +64,7 @@ class StageEditorMenu {
             create: this.createButton('Create', this.stageEditor.stage.newStage),
         }
         Object.values(this.stageMenuElements).forEach(el => {
-            this.stageMenu.appendChild(el?.label ? el.label : el)
+            this.stageMenu.appendChild(el?.label || el)
             this.stageMenu.appendChild(this.br())
         })
         this.stageEditor.container.appendChild(this.stageMenu)

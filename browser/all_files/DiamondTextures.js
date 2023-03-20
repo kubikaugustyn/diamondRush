@@ -42,13 +42,36 @@ class DiamondTextures {
     }
 
     parse() {
-        var num_textures = arr2smallEndian(this.dec.shiftTimes(2))
+        /*var num_textures = arr2smallEndian(this.dec.shiftTimes(2))
         this.setCount(num_textures)
         this.setDimensions(this.dec.shiftTimes(num_textures * 2))
         this.setIds(this.dec.shiftTimes(arr2smallEndian(this.dec.shiftTimes(2)) * 4))
 
         console.log("Number of textures:", num_textures)
-        // console.log("Remaining data:", this.dec, this.dec.join(" "))
+        // console.log("Remaining data:", this.dec, this.dec.join(" "))*/
+        // ORIGINAL IMPLEMENTATION FROM DIAMOND RUSH
+        // class f --> public final void a(final byte[] array, int n)
+        // where byte[] array is chunk raw data - df 03 ...
+        // where int n is 0
+        // class i --> private static f a(final String s, final int n, final int a, final int n2)
+        var a = 0, n2 = 0
+        var texture = new f()
+        texture.aByte1DAndIntReturnVoid(this.dec.slice(), 0)
+        console.log(texture.aInt)
+        texture.aInt = 10225
+        console.log(texture.aInt)
+        /*for (var i = a; i <= n2; ++i) {
+            texture.aIntAndIntAndIntAndIntReturnVoid(i, 0, -1, -1);
+        }
+        texture.aInt = a;*/
+        // texture.dByte1D = null;
+        console.log("Texture class f:", texture)
+        // console.log(texture.toStringReturnString())
+        texture.aIntAndIntAndIntAndIntReturnVoid(0, 0, -1, -1)
+        var graphics = new Graphics()
+        // texture.aGraphicsAndIntAndIntAndIntAndIntReturnVoid(graphics, 0, 0, 0, 0)
+        graphics.drawImage(texture.aImage2D[0][0], 10, 20, 0)
+        // https://docs.oracle.com/javame/config/cldc/ref-impl/midp2.0/jsr118/javax/microedition/lcdui/Image.html
     }
 
     render(container) {

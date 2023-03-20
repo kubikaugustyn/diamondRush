@@ -127,7 +127,10 @@ class Constant {
     }
 
     toString() {
-        if (typeof this.values === "string") return this.values
+        if (typeof this.values === "string") {
+            if (this.type.type === "UTF-8") return this.values
+            return `${this.type} ${this.values}`
+        }
         return JSON.stringify(this.values)
     }
 }
@@ -276,9 +279,9 @@ class Field {
     getInfo(binaryArray, constantPoolTable) {
         this.access_flags = new AccessFlags(hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()])))
         this.name_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
-        this.name = constantPoolTable[this.name_index - 1]?.toString()
+        this.name = constantPoolTable[this.name_index - 1].values//?.toString()
         this.descriptor_index = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
-        this.descriptor = constantPoolTable[this.descriptor_index - 1]?.toString()
+        this.descriptor = constantPoolTable[this.descriptor_index - 1]//?.toString()
         this.attributes_count = hex2num(bin2hex([binaryArray.shift(), binaryArray.shift()]))
         for (var i = 0; i < this.attributes_count; i++) {
             var attribute = new Attribute()
@@ -343,7 +346,7 @@ function decompile(binary) {
         console.groupEnd()
     }
     console.groupEnd()
-    console.log("Constants table:", constantPoolTable)
+    console.log("Constants table:", constantPoolTable.map(a => a.toString()).join("\n"))
 
     function getConstant(hex) {
         return constantPoolTable[hex2num(hex.split(" ")) - 1]
@@ -373,6 +376,7 @@ function decompile(binary) {
     for (i = 0; i < fieldPoolCount; i++) {
         var field = new Field()
         binary = field.getInfo(binary, constantPoolTable)
+        console.log(`Field ${i}:`, field)
         fieldPoolTable.push(field)
     }
     console.groupEnd()
@@ -439,6 +443,7 @@ function decompile(binary) {
             switch (char) {
                 case "[":
                     arr += "[]"
+                    exit = false
                     break
                 case "B":
                     type += "byte"
@@ -489,7 +494,7 @@ function decompile(binary) {
         var parameters = []
 
         // console.log(method.descriptor)
-        var descriptor = `${method.descriptor}`.split("")
+        var descriptor = `${method.descriptor.values}`.split("")
         var stage = "wait"
         while (descriptor.length) {
             var char = descriptor[0]
@@ -514,10 +519,11 @@ function decompile(binary) {
 
     var extendedClass = importClass(getConstant(constantPoolTable[superClassIndex - 1].values[0]).toString())
     code += `${accessFlags.getFlagProps("text").join(" ")} class ${getConstant(constantPoolTable[thisClassIndex - 1].values[0]).toString()} extends ${extendedClass} {\n`
+
     try {
         var a, b, c
         for (var f of fieldPoolTable) {
-            a = nameField(f.descriptor.split(""), f.name)
+            a = nameField(f.descriptor.values.split(""), f.name)
             b = f.access_flags.getFlagProps("text").join(" ") + " " + a[0] + " " + a[1] + a[2]
             code += "\t" + b
         }
@@ -543,12 +549,19 @@ function decompile(binary) {
         for (var m of methodPoolTable) {
             // console.log(m)
             var [returnType, parameters] = nameMethod(m)
+            parameters = parameters.map(param => {
+                if (param.includes("/")) importClass(param.replaceAll("[]", ""))
+                return param.split("/").reverse()[0]
+            })
+            var parameterNames = parameters.map((type, i) => `param${i}${type.replaceAll("[]", "Arr")}`)
+            console.log(returnType, parameters)
             if (parameters.length === 0 && returnType === "void" && m.name === "<clinit>") {
                 code += "\tdefault static\n"
                 continue
             }
-            b = `${m.access_flags.getFlagProps("text").join(" ")} ${returnType} ${m.name}(${parameters.join(", ")})`
+            b = `${m.access_flags.getFlagProps("text").join(" ")} ${returnType} ${m.name}(${parameterNames.map((name, i) => `${parameters[i]} ${name}`).join(", ")})`
             code += `\t${b}\n`
+            // NOW THE METHOD BYTECODE MAGIC I THINK
         }
     } catch (e) {
         console.log(e)

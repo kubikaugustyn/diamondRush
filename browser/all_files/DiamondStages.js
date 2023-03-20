@@ -32,6 +32,19 @@ class DiamondStage {
 
         var any = new Array(256).fill(0).map((_, i) => i)
 
+        /*
+        Data layer directions
+        Face left: <
+
+             ^
+             |
+             ?
+        <-- 4  2 -->
+             ?
+             |
+            \|/
+        */
+
         this.palette = [
             [
                 [255],
