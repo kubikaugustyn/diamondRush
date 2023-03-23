@@ -166,6 +166,10 @@ public final class f
     }
     
     public final void a(final int a, int a2, int n, int i) {
+        // a = 0
+        // a2 = 0
+        // n = -1
+        // i = -1
         if (this.f == null) {
             return;
         }

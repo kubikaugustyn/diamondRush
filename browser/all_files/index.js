@@ -196,6 +196,7 @@ function parseFile(binary, e) {
             r.innerHTML = "This file type is not implemented yet: " + file_main_type
             break
     }*/
+    window.scrollTo(0, 1000)
 }
 
 init()

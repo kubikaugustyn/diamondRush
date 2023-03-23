@@ -5,8 +5,46 @@ class Graphics {
         console.log("Draw region", ...args)
     }
 
-    drawImage(...args) {
-        console.log("Draw image", ...args)
+    // drawImage(img, x, y, anchor)
+    drawImage(img, x, y, anchor) {
+        console.log("Draw image", ...arguments)
+        var image = img.toCanvasEngine2DImage()
+        console.log(image)
+        return image
+    }
+}
+
+class RGBAImage {
+    rgb
+    width
+    height
+    processAlpha
+
+    toCanvasEngine2DImage(id = "RGBAImage", engine) {
+        var data = new Array(this.rgb.length * 4)
+        for (var [i, val] of Object.entries(this.rgb)) {
+            // val - 0xAARRGGBB
+            var rI = i * 4
+            data[rI] = (val >> 16) & 0xFF
+            data[rI + 1] = (val >> 8) & 0xFF
+            data[rI + 2] = val & 0xFF
+            data[rI + 3] = (val >> 24) & 0xFF
+        }
+        var image = engine ? engine.createImage(id) : CanvasEngine2D.prototype.createImage(id)
+        if (engine) engine.parseRGBAImageData(image, this.width, this.height, data, [])
+        else CanvasEngine2D.prototype.parseRGBAImageData(image, this.width, this.height, data, [])
+        return image
+    }
+
+    // createRGBImage(int[] rgb, int width, int height, boolean processAlpha)
+    static createRGBImage(rgb, width, height, processAlpha) {
+        // console.log("Create RGB image", rgb, width, height, processAlpha)
+        var img = new RGBAImage()
+        img.rgb = rgb
+        img.width = width
+        img.height = height
+        img.processAlpha = processAlpha
+        return img
     }
 }
 
@@ -20,11 +58,19 @@ class f {
     bByte1D;
     aShort1D;
     cByte1D;
+    /**
+     * Palette
+     * @type {number[][]}
+     */
     #aInt2D;
     #bInt;
     aInt;
     #aBoolean;
     #aShort;
+    /**
+     * Texture data
+     * @type {number[]}
+     */
     dByte1D;
     #cShort1D;
     aImage2D;
@@ -34,11 +80,6 @@ class f {
         for (var i = 0; i < length; i++) {
             dest[destPos + i] = src[srcPos + i]
         }
-    }
-
-    // createRGBImage(int[] rgb, int width, int height, boolean processAlpha)
-    imageCreateRGBImage(rgb, width, height, processAlpha) {
-        console.log(rgb, width, height, processAlpha)
     }
 
     /**
@@ -161,9 +202,11 @@ class f {
                     n23 += n26;
                 }
                 this.dByte1D = new Array(n23);
+                console.log(this.dByte1D, n5, this.#cShort1D)
                 for (var n27 = 0; n27 < n5; ++n27) {
                     var n28 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
                     this.systemArrayCopy(array, n, this.dByte1D, this.#cShort1D[n27] & 0xFFFF, n28);
+                    console.log(array.slice(n,n+n28), n, this.dByte1D.slice(), this.#cShort1D[n27] & 0xFFFF, n28)
                     n += n28;
                 }
                 console.log(this.dByte1D)
@@ -207,7 +250,7 @@ class f {
                         break;
                     }
                 }
-                this.aImage2D[a][i] = this.imageCreateRGBImage(a3, n3, n4, b);
+                this.aImage2D[a][i] = RGBAImage.createRGBImage(a3, n3, n4, b);
             }
         }
         this.aInt = a2;
@@ -327,7 +370,7 @@ class f {
             if ((a = this.aIntReturnInt1D(n)) == null) {
                 return;
             }
-            rgbImage = this.imageCreateRGBImage(a, n6, n7, this.#aBoolean);
+            rgbImage = RGBAImage.createRGBImage(a, n6, n7, this.#aBoolean);
         }
         var width = rgbImage.getWidth();
         var height = rgbImage.getHeight();
@@ -373,24 +416,25 @@ class f {
     }
 
     aIntReturnInt1D(n) {
+        console.log("Get image data at index", n, this.#aShort)
         if (this.dByte1D === null || this.#cShort1D === null) {
             console.log("Return", this.dByte1D, this.#cShort1D)
             return null;
         }
         var n2 = n << 1;
-        var n3 = this.#fByte1D[n2] & 0xFF;
-        var n4 = this.#fByte1D[n2 + 1] & 0xFF;
-        var a = f.#aInt1D;
+        var n3 = this.#fByte1D[n2] & 0xFF; // Read width
+        var n4 = this.#fByte1D[n2 + 1] & 0xFF; // And height
+        var a = new Array(4096)//f.#aInt1D; // For memory purposes (maximum 4096 pixels in image) - new textures are overwriting old ones!!!
         var array;
         if ((array = this.#aInt2D[this.aInt]) == null) {
             console.log("Return", array)
             return null;
         }
-        var d = this.dByte1D;
-        n = (this.#cShort1D[n] & 0xFFFF);
-        var i = 0;
-        var n5 = n3 * n4;
-        if (this.aInt === 10225) {
+        var d = this.dByte1D; // The pixel data bytes
+        n = (this.#cShort1D[n] & 0xFFFF); // Index inside d variable
+        var i = 0; // Index inside a variable, the number[4096] in format 0xAARRGGBB
+        var n5 = n3 * n4; // Total pixels
+        if (this.#aShort === 10225) {
             while (i < n5) {
                 var n6;
                 if ((n6 = (d[n++] & 0xFF)) > 127) {
@@ -403,13 +447,13 @@ class f {
                     a[i++] = array[n6];
                 }
             }
-        } else if (this.aInt === 5632) {
+        } else if (this.#aShort === 5632) {
             while (i < n5) {
-                a[i++] = array[d[n] >> 4 & 0xF];
-                a[i++] = array[d[n] & 0xF];
+                a[i++] = array[d[n] >> 4 & 0xF]; // That's the texture encoding I found
+                a[i++] = array[d[n] & 0xF]; // 2 pixels per byte, max 4-bit palette
                 ++n;
             }
-        } else if (this.aInt === 1024) {
+        } else if (this.#aShort === 1024) {
             while (i < n5) {
                 a[i++] = array[d[n] >> 6 & 0x3];
                 a[i++] = array[d[n] >> 4 & 0x3];
@@ -417,7 +461,7 @@ class f {
                 a[i++] = array[d[n] & 0x3];
                 ++n;
             }
-        } else if (this.aInt === 512) {
+        } else if (this.#aShort === 512) {
             while (i < n5) {
                 a[i++] = array[d[n] >> 7 & 0x1];
                 a[i++] = array[d[n] >> 6 & 0x1];
@@ -429,11 +473,11 @@ class f {
                 a[i++] = array[d[n] & 0x1];
                 ++n;
             }
-        } else if (this.aInt === 22018) {
+        } else if (this.#aShort === 22018) {
             while (i < n5) {
                 a[i++] = array[d[n++] & 0xFF];
             }
-        } else if (this.aInt === 22258) {
+        } else if (this.#aShort === 22258) {
             while (i < n5) {
                 var n8;
                 if ((n8 = (d[n++] & 0xFF)) > 127) {
@@ -479,5 +523,12 @@ class f {
             }
             this.aImage2D = null;
         }
+    }
+
+    /**
+     * @return {number[]}
+     */
+    getFByte1D() {
+        return this.#fByte1D
     }
 }

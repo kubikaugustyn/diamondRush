@@ -70,19 +70,41 @@ class DiamondTextures {
         texture.aIntAndIntAndIntAndIntReturnVoid(0, 0, -1, -1)
         var graphics = new Graphics()
         // texture.aGraphicsAndIntAndIntAndIntAndIntReturnVoid(graphics, 0, 0, 0, 0)
-        graphics.drawImage(texture.aImage2D[0][0], 10, 20, 0)
+        // graphics.drawImage(texture.aImage2D[0][0], 10, 20, 0)
+        var dimensions = texture.getFByte1D()
+        if (dimensions) {
+            var images = []
+            for (var i = 0; i < texture.aImage2D.length; i++) {
+                if (texture.aImage2D[i]) for (var j = 0; j < texture.aImage2D[i].length; j++) {
+                    if (texture.aImage2D[i][j]) images.push(texture.aImage2D[i][j])
+                }
+            }
+            if (images.length !== dimensions.length / 2) throw new Error("Something went wrong")
+            this.setCount(images.length)
+            this.setDimensions(dimensions)
+            for (var [k, image] of Object.entries(images)) {
+                var text = this.textures[k]
+                var img = image.toCanvasEngine2DImage("RGBAImage", text.engine)
+                text.engine.addElement(img, 0, 0, 0)
+            }
+        }
         // https://docs.oracle.com/javame/config/cldc/ref-impl/midp2.0/jsr118/javax/microedition/lcdui/Image.html
     }
 
     render(container) {
-        container.innerHTML = `In this chunk there are ${this.count} textures.`
+        var check = document.getElementById("strict_textures")
+        var strict = check ? !check.checked : false
+        if (strict) container.innerHTML = `In this chunk there are ${this.count} textures.`
         for (var i = 0; i < this.count; i++) {
             var texture = this.textures[i]
             var div = document.createElement("div")
+            div.classList.add("inline")
             container.appendChild(div)
             div.innerHTML = `<h3>Texture ${i + 1}</h3>`
-            div.innerHTML += `Texture size: ${texture.getWidth()} px X ${texture.getHeight()} px<br>`
-            div.innerHTML += `Texture ID: ${texture.getIdHex()}<br>`
+            if (strict) {
+                div.innerHTML += `Texture size: ${texture.getWidth()} px X ${texture.getHeight()} px<br>`
+                div.innerHTML += `Texture ID: ${texture.getIdHex()}<br>`
+            }
             texture.render()
             div.appendChild(texture.getCanvas())
         }
