@@ -29,6 +29,7 @@ function decode_utf8(s) {
 
 class DiamondText {
     constructor(text) {
+        console.log(text)
         this.text = decode_utf8(text)
 
         Object.getOwnPropertyNames(Object.getPrototypeOf(this)).filter(method => (method !== 'constructor')).forEach((method) => {

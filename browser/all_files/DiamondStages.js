@@ -320,7 +320,7 @@ class DiamondStage {
                 "Defeat everyone marker (marking block on top of it) - when marking entity (adds to list of entities to be defeated) or chest and doors (adds to list of blocks to be open / unlocked)"
             ],
             [
-                [35],
+                [34, 35],
                 [255],
                 [255],
                 "#00f",

@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title>Diamond Rush All files</title>
-    <script src="https://kuba-apis.web.app/js/myquery/1.0.0/myquery.js"></script>
-    <script src="https://kubovy-hry.web.app/src/js/game/CanvasEngine2D.js"></script>
+    <!--<script src="https://kuba-apis.web.app/js/myquery/1.0.0/myquery.js"></script>-->
+    <!--<script src="https://kubovy-hry.web.app/src/js/game/CanvasEngine2D.js"></script>-->
+    <script src="CanvasEngine2D-6_23_2023.js"></script>
     <script src="UPNG.js"></script>
     <!--<script src="Texts.js"></script>-->
+    <script src="ArrayIterator.js"></script>
+    <script src="ArrayBuffer.js"></script>
+    <script src="ByteMarker.js"></script>
     <script src="DiamondFile.js"></script>
     <script src="f.js"></script>
     <script src="DiamondTextures.js"></script>
+    <script src="DiamondDemoSpr.js"></script>
     <script src="DiamondChunks.js"></script>
     <script src="DiamondMap.js"></script>
     <script src="DiamondStages.js"></script>
     <script src="DiamondTexts.js"></script>
     <script src="DiamondPng.js"></script>
+    <script src="DiamondRaw.js"></script>
     <script src="index.js" defer></script>
     <style>
         table, tr, td, th {
@@ -23,6 +29,16 @@
 
         .center {
             text-align: center;
+        }
+
+        label {
+            display: block;
+            position: relative;
+        }
+
+        .right {
+            position: absolute;
+            right: 0;
         }
 
         #file_form {
@@ -53,15 +69,17 @@
 <form id="file_form">
     <fieldset>
         <legend>Choose file</legend>
-        <label><input type="checkbox" id="strict_textures"> Strict textures</label>
+        <label><input type="checkbox" checked id="strict_textures"> Strict textures</label>
         <fieldset>
             <legend>Choose file main type</legend>
-            Will be used only if file<br>
-            main type was not defined in program.<br>
-            <label><input type="radio" value="chunks" name="file_main_type" checked>Chunks</label><br>
-            <label><input type="radio" value="map" name="file_main_type">Map</label><br>
-            <label><input type="radio" value="stages" name="file_main_type">Stages</label><br>
-            <label><input type="radio" value="texts" name="file_main_type">Texts</label><br>
+            Will be used only<br>
+            if file main type<br>
+            was not defined in program.<br>
+            <label><input type="radio" value="chunks" name="file_main_type" checked>Chunks</label>
+            <label><input type="radio" value="raw" name="file_main_type">Raw</label>
+            <label><input type="radio" value="map" name="file_main_type">Map</label>
+            <label><input type="radio" value="stages" name="file_main_type">Stages</label>
+            <label><input type="radio" value="texts" name="file_main_type">Texts</label>
             <label><input type="radio" value="PNG" name="file_main_type">PNG</label>
         </fieldset>
         <input id="submit" type="submit" value="Load">

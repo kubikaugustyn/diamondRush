@@ -50,6 +50,10 @@ class RGBAImage {
 
 class f {
     static #aInt1D = new Array(4096); // int[4096]
+    /**
+     * Dimensions ([W, H, ...])
+     * @type {number[]}
+     */
     #fByte1D;
     #gByte1D;
     #bShort1D;
@@ -73,10 +77,21 @@ class f {
      */
     dByte1D;
     #cShort1D;
+    /**
+     * Textures
+     * @type {RGBAImage[][]}
+     */
     aImage2D;
     static eByte1D;
 
+    markerContainer;
+
+    constructor() {
+        this.markerContainer = document.createElement("div")
+    }
+
     systemArrayCopy(src, srcPos, dest, destPos, length) {
+        // console.log("Array copy:", ...arguments)
         for (var i = 0; i < length; i++) {
             dest[destPos + i] = src[srcPos + i]
         }
@@ -85,68 +100,100 @@ class f {
     /**
      * @param array {Array<number>}
      * @param n {number}
+     * @param useMarker {boolean}
      */
-    aByte1DAndIntReturnVoid(array, n) {
+    aByte1DAndIntReturnVoid(array, n, useMarker = false) {
+        var c = {
+            len: "red",
+            len1: "pink",
+            data: "green",
+            data1: "cyan",
+            imgData: "yellow",
+            sizeData: "yellow",
+            paletteData: "lightgreen"
+        }
+        var marker = useMarker ? new ByteMarker(array, n, this.markerContainer) : new BlankByteMarker(array, n, this.markerContainer)
         try {
             n += 6
+            marker.skip(6)
             var n2 = 6
             n++
-            var n3 = array[n2] & 0xFF // I think int&0xFF is some trash but whatever
+            marker.next(c.len, 2)
+            var n3 = array[n2] & 0xFF // I think int&0xFF is some trash but whatever - EDIT: it's byte --> int
             var n4 = 7
             n++
             var n5
             if ((n5 = (n3 + ((array[n4] & 0xFF) << 8))) > 0) {
                 this.systemArrayCopy(array, 8, this.#fByte1D = new Array(n5 << 1), 0, this.#fByte1D.length)
+                marker.jump(8)
+                marker.next(c.sizeData, this.#fByte1D.length)
                 n = 8 + this.#fByte1D.length
             }
             var n6
+            marker.next(c.len, 2)
             if ((n6 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) {
                 this.systemArrayCopy(array, n, this.#hByte1D = new Array(n6 << 2), 0, this.#hByte1D.length);
+                marker.next(c.data, this.#hByte1D.length)
                 n += this.#hByte1D.length;
             }
             var n7
+            marker.next(c.len, 2)
             if ((n7 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) {
                 this.#gByte1D = new Array(n7);
                 this.#bShort1D = new Array(n7);
                 for (var n8 = 0; n8 < n7; ++n8) {
                     this.#gByte1D[n8] = array[n++];
+                    marker.next(c.data, 1)
                     ++n;
+                    marker.skip(1) // WTF
+                    marker.next(c.data1, 2)
                     this.#bShort1D[n8] = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
                 }
                 var n9 = n7 << 2;
                 this.aByte1D = new Array(n9);
+                marker.next(c.data, n9)
                 for (var i = 0; i < n9; ++i) {
                     this.aByte1D[i] = array[n++];
                 }
             }
             var n10
+            marker.next(c.len, 2)
             if ((n10 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) {
                 this.systemArrayCopy(array, n, this.cByte1D = new Array(n10 * 5), 0, this.cByte1D.length);
+                marker.next(c.data, this.cByte1D.length)
                 n += this.cByte1D.length;
             }
             var n11;
+            marker.next(c.len, 2)
             if ((n11 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8))) > 0) {
                 this.bByte1D = new Array(n11);
                 this.aShort1D = new Array(n11);
                 for (var n12 = 0; n12 < n11; ++n12) {
                     this.bByte1D[n12] = array[n++];
+                    marker.next(c.data, 1)
                     ++n;
+                    marker.skip(1) // WTF?!
+                    marker.next(c.data1, 2)
                     this.aShort1D[n12] = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
                 }
             }
             if (n5 <= 0) {
                 return;
             }
+            marker.next(c.len, 2)
             var n13 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
+            marker.next(c.len1, 1)
             this.#bInt = (array[n++] & 0xFF);
+            marker.next(c.len, 1)
             var n14 = array[n++] & 0xFF;
-            this.#aInt2D = new Array(16); // WARNING: 2D array
+            this.#aInt2D = new Array(16); // WARNING: 2D array - Palete
             for (var j = 0; j < this.#bInt; ++j) {
                 this.#aInt2D[j] = new Array(n14);
                 switch (n13) {
                     case -30584: {
                         for (var k = 0; k < n14; ++k) {
                             var n15;
+                            marker.next(c.paletteData, 4)
                             if (((n15 = (array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8) + ((array[n++] & 0xFF) << 16) + ((array[n++] & 0xFF) << 24)) & 0xFF000000) !== 0xFF000000) {
                                 this.#aBoolean = true;
                             }
@@ -157,6 +204,7 @@ class f {
                     case 17476: {
                         for (var l = 0; l < n14; ++l) {
                             var n16;
+                            marker.next(c.paletteData, 2)
                             if (((n16 = (array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8)) & 0xF000) !== 0xF000) {
                                 this.#aBoolean = true;
                             }
@@ -166,7 +214,8 @@ class f {
                     }
                     case 21781: {
                         for (var n17 = 0; n17 < n14; ++n17) {
-                            var n18 = (array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8);
+                            marker.next(c.paletteData, 2)
+                            var n18 = (array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8); // ARRRRRGGGGGBBBBB
                             var n19 = -16777216;
                             if ((n18 & 0x8000) !== 0x8000) {
                                 n19 = 0;
@@ -178,6 +227,7 @@ class f {
                     }
                     case 25861: {
                         for (var n20 = 0; n20 < n14; ++n20) {
+                            marker.next(c.paletteData, 2)
                             var n21 = (array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8);
                             var n22 = -16777216;
                             if (n21 === 63519) {
@@ -190,30 +240,38 @@ class f {
                     }
                 }
             }
+            marker.next(c.len, 2)
             this.#aShort = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
             if (n5 > 0) {
                 this.#cShort1D = new Array(n5);
                 var n23 = 0;
                 var n24 = n;
                 for (var n25 = 0; n25 < n5; ++n25) {
+                    marker.jump(n24)
+                    marker.next(c.data, 2)
                     var n26 = ((array[n24++] & 0xFF) + ((array[n24++] & 0xFF) << 8));
                     this.#cShort1D[n25] = n23;
                     n24 += n26;
                     n23 += n26;
                 }
                 this.dByte1D = new Array(n23);
-                console.log(this.dByte1D, n5, this.#cShort1D)
+                //console.log(this.dByte1D, n5, this.#cShort1D)
                 for (var n27 = 0; n27 < n5; ++n27) {
+                    marker.jump(n)
+                    marker.next(c.data1, 2)
                     var n28 = ((array[n++] & 0xFF) + ((array[n++] & 0xFF) << 8));
-                    this.systemArrayCopy(array, n, this.dByte1D, this.#cShort1D[n27] & 0xFFFF, n28);
-                    console.log(array.slice(n,n+n28), n, this.dByte1D.slice(), this.#cShort1D[n27] & 0xFFFF, n28)
+                    this.systemArrayCopy(array, n, this.dByte1D, this.#cShort1D[n27] & 0xFFFF, n28); // src, srcPos, dest, destPos, length
+                    marker.jump(n)
+                    marker.next(c.imgData, n28)
+                    //console.log(array.slice(n, n + n28), n, this.dByte1D.slice(), this.#cShort1D[n27] & 0xFFFF, n28)
                     n += n28;
                 }
-                console.log(this.dByte1D)
+                //console.log(this.dByte1D)
             }
         } catch (ex) {
             console.error(ex)
         }
+        marker.render()
     }
 
     /**
@@ -223,6 +281,7 @@ class f {
      * @param i {number}
      */
     aIntAndIntAndIntAndIntReturnVoid(a, a2, n, i) {
+        console.log("FBYTE1D", this.#fByte1D)
         if (this.#fByte1D == null) {
             return;
         }
@@ -425,9 +484,9 @@ class f {
         var n3 = this.#fByte1D[n2] & 0xFF; // Read width
         var n4 = this.#fByte1D[n2 + 1] & 0xFF; // And height
         var a = new Array(4096)//f.#aInt1D; // For memory purposes (maximum 4096 pixels in image) - new textures are overwriting old ones!!!
-        var array;
-        if ((array = this.#aInt2D[this.aInt]) == null) {
-            console.log("Return", array)
+        var palette;
+        if ((palette = this.#aInt2D[this.aInt]) == null) {
+            console.log("Return", palette)
             return null;
         }
         var d = this.dByte1D; // The pixel data bytes
@@ -438,44 +497,44 @@ class f {
             while (i < n5) {
                 var n6;
                 if ((n6 = (d[n++] & 0xFF)) > 127) {
-                    var n7 = array[d[n++] & 0xFF];
+                    var n7 = palette[d[n++] & 0xFF];
                     n6 -= 128;
                     while (n6-- > 0) {
                         a[i++] = n7;
                     }
                 } else {
-                    a[i++] = array[n6];
+                    a[i++] = palette[n6];
                 }
             }
         } else if (this.#aShort === 5632) {
             while (i < n5) {
-                a[i++] = array[d[n] >> 4 & 0xF]; // That's the texture encoding I found
-                a[i++] = array[d[n] & 0xF]; // 2 pixels per byte, max 4-bit palette
+                a[i++] = palette[d[n] >> 4 & 0xF]; // That's the texture encoding I found
+                a[i++] = palette[d[n] & 0xF]; // 2 pixels per byte, max 4-bit palette
                 ++n;
             }
         } else if (this.#aShort === 1024) {
             while (i < n5) {
-                a[i++] = array[d[n] >> 6 & 0x3];
-                a[i++] = array[d[n] >> 4 & 0x3];
-                a[i++] = array[d[n] >> 2 & 0x3];
-                a[i++] = array[d[n] & 0x3];
+                a[i++] = palette[d[n] >> 6 & 0x3];
+                a[i++] = palette[d[n] >> 4 & 0x3];
+                a[i++] = palette[d[n] >> 2 & 0x3];
+                a[i++] = palette[d[n] & 0x3];
                 ++n;
             }
         } else if (this.#aShort === 512) {
             while (i < n5) {
-                a[i++] = array[d[n] >> 7 & 0x1];
-                a[i++] = array[d[n] >> 6 & 0x1];
-                a[i++] = array[d[n] >> 5 & 0x1];
-                a[i++] = array[d[n] >> 4 & 0x1];
-                a[i++] = array[d[n] >> 3 & 0x1];
-                a[i++] = array[d[n] >> 2 & 0x1];
-                a[i++] = array[d[n] >> 1 & 0x1];
-                a[i++] = array[d[n] & 0x1];
+                a[i++] = palette[d[n] >> 7 & 0x1];
+                a[i++] = palette[d[n] >> 6 & 0x1];
+                a[i++] = palette[d[n] >> 5 & 0x1];
+                a[i++] = palette[d[n] >> 4 & 0x1];
+                a[i++] = palette[d[n] >> 3 & 0x1];
+                a[i++] = palette[d[n] >> 2 & 0x1];
+                a[i++] = palette[d[n] >> 1 & 0x1];
+                a[i++] = palette[d[n] & 0x1];
                 ++n;
             }
         } else if (this.#aShort === 22018) {
             while (i < n5) {
-                a[i++] = array[d[n++] & 0xFF];
+                a[i++] = palette[d[n++] & 0xFF];
             }
         } else if (this.#aShort === 22258) {
             while (i < n5) {
@@ -483,10 +542,10 @@ class f {
                 if ((n8 = (d[n++] & 0xFF)) > 127) {
                     n8 -= 128;
                     while (n8-- > 0) {
-                        a[i++] = array[d[n++] & 0xFF];
+                        a[i++] = palette[d[n++] & 0xFF];
                     }
                 } else {
-                    var n9 = array[d[n++] & 0xFF];
+                    var n9 = palette[d[n++] & 0xFF];
                     while (n8-- > 0) {
                         a[i++] = n9;
                     }
@@ -529,6 +588,13 @@ class f {
      * @return {number[]}
      */
     getFByte1D() {
-        return this.#fByte1D
+        return this.#fByte1D//.slice()
+    }
+
+    /**
+     * @return {number[][]}
+     */
+    getAInt2D() {
+        return this.#aInt2D//structuredClone(this.#aInt2D)
     }
 }

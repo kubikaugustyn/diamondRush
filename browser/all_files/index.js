@@ -1,6 +1,8 @@
 var __author__ = "kubik.augustyn@post.cz"
 
 FILE_CHUNKS = DiamondChunks
+FILE_RAW = DiamondRaw
+FILE_DEMOSPR = DiamondDemoSpr
 FILE_MAP = DiamondMap
 FILE_STAGES = DiamondStages
 FILE_TEXTS = DiamondTexts
@@ -18,7 +20,7 @@ var files_list = {
     "cm.f": FILE_CHUNKS,
     "cr.f": FILE_CHUNKS,
     "demo.f": FILE_UNDEFINED,
-    "demoSpr.bin": FILE_UNDEFINED,
+    "demoSpr.bin": FILE_UNDEFINED,//FILE_DEMOSPR,//FILE_RAW,
     "demoui.f": FILE_CHUNKS,
     "gen0.f": FILE_CHUNKS,
     "gen1.f": FILE_CHUNKS,
@@ -131,8 +133,32 @@ function init() {
     ge("files").innerHTML = Object.entries(files_list).map(
         (file, index) => {
             var [fileName, fileClass] = file
+            var type
+            switch (fileClass) {
+                case FILE_CHUNKS:
+                    type = "Chunks"
+                    break
+                case FILE_RAW:
+                    type = "Raw"
+                    break
+                case FILE_DEMOSPR:
+                    type = "demoSpr.bin"
+                    break
+                case FILE_MAP:
+                    type = "Map"
+                    break
+                case FILE_STAGES:
+                    type = "Stages"
+                    break
+                case FILE_TEXTS:
+                    type = "Texts"
+                    break
+                case FILE_PNG:
+                    type = "PNG"
+                    break
+            }
             files_list[fileName] = new fileClass(fileName)
-            return `<label><input type="radio" value="${fileName}" name="file"${index === checked_file_i ? " checked" : ""}>${fileName}</label><br>`
+            return `<label><input type="radio" value="${fileName}" name="file"${index === checked_file_i ? " checked" : ""}>${fileName}${type ? "<span class=\"right\">(" + type + ")</span>" : ""}</label>`
         }
     ).join("")
 
@@ -141,22 +167,33 @@ function init() {
 
 function loadFile(e) {
     e.preventDefault()
-    console.log(e)
-    var inputs = new Array(...document.getElementsByName("file")).filter(a => a.checked)
-    if (!inputs.length) return false
-    var file = inputs[0].value
+    //console.log(e)
+    var inputs = new Array(...document.getElementsByName("file"))
+    var input = inputs.find(a => a.checked)
+    if (!input) return false
+    var file = input.value
     var i = Object.keys(files_list).indexOf(file)
     if (!file || i < 0) return false
     checked_file_i = i
     currentFileName = file
     localStorage.setItem("diamondRush-all_files-file_index", i)
-    $$.Data.httpBinary("../diamond_EUD.jar/" + file, parseFile)
+    //$$.Data.httpBinary("../diamond_EUD.jar/" + file, parseFile)
+    var http = new XMLHttpRequest()
+    http.open("GET", "../diamond_EUD.jar/" + file, true)
+    http.responseType = "arraybuffer"
+    http.onload = (function (event) {
+        var decArr = Array.from(new Uint8Array(this.response))
+        var binArr = []
+        decArr.forEach(a => binArr.push(a.toString(2)))
+        parseFile(binArr, event, this)
+    }).bind(http)
+    http.send()
 }
 
 function parseFile(binary, e) {
     var dec = binary.map(a => parseInt(a, 2))
     console.log("Parse file:", dec)
-    var file_main_type = new Array(...document.getElementsByName("file_main_type")).filter(a => a.checked)[0].value
+    var file_main_type = new Array(...document.getElementsByName("file_main_type")).find(a => a.checked).value
     var r = ge("result")
     r.innerHTML = ""
     var file = files_list[currentFileName]
@@ -165,6 +202,9 @@ function parseFile(binary, e) {
         switch (file_main_type) {
             case "chunks":
                 file = new DiamondChunks(file.fileName)
+                break
+            case "raw":
+                file = new DiamondRaw(file.fileName)
                 break
             case "map":
                 file = new DiamondMap(file.fileName)

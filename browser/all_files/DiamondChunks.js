@@ -34,8 +34,9 @@ class DiamondChunks extends DiamondFile {
     }
 
     parse(dec, r) {
+        // console.log("Whole file:", dec.join(" "))
         var num_chunks = dec.shift()
-        var chunk_data = dec.shiftTimes(num_chunks * 8)
+        var chunk_data = dec.shiftTimes(num_chunks * 8) // num_chunks << 3 in ORIGINAL IMPLEMENTATION
         var chunks = []
         for (var i = 0; i < num_chunks; i++) {
             var address = arr2smallEndian(chunk_data.shiftTimes(4))
@@ -47,12 +48,13 @@ class DiamondChunks extends DiamondFile {
             r.appendChild(h1)
             r.appendChild(chunkDiv)
 
-            console.group("Chunk " + (i + 1))
+            console.groupCollapsed("Chunk " + (i + 1))
             console.log("Decimal:", chunk)
             try {
-                var c = new Array(...chunk)
-                if (c[0] === 223) {// df (03 01 01 01 01) - Texture file
+                var c = chunk.slice()
+                if (c[0] === 223 || c[0] === 26) {// df (03 01 01 01 01) - Texture file
                     h1.innerHTML += "Textures"
+                    // console.log("Address: ", address, "Length:", length)
                     var textures = new DiamondTextures(c)
                     textures.setScale(5)
                     textures.render(chunkDiv)
