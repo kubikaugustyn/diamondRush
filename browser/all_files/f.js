@@ -12,6 +12,14 @@ class Graphics {
         console.log(image)
         return image
     }
+
+    fillRect(x, y, width, height) {
+        console.log("fillRect", x, y, width, height)
+    }
+
+    setColor(RGB) {
+        console.log("setColor", RGB)
+    }
 }
 
 class RGBAImage {

@@ -19,8 +19,8 @@ var files_list = {
     "b1.f": FILE_CHUNKS,
     "cm.f": FILE_CHUNKS,
     "cr.f": FILE_CHUNKS,
-    "demo.f": FILE_UNDEFINED,
-    "demoSpr.bin": FILE_UNDEFINED,//FILE_DEMOSPR,//FILE_RAW,
+    "demo.f": FILE_DEMOSPR,//FILE_UNDEFINED,
+    "demoSpr.bin": FILE_DEMOSPR,//FILE_RAW,
     "demoui.f": FILE_CHUNKS,
     "gen0.f": FILE_CHUNKS,
     "gen1.f": FILE_CHUNKS,
@@ -71,6 +71,7 @@ var checked_file_i = parseInt(localStorage.getItem("diamondRush-all_files-file_i
 // var checked_file_i = 46
 var currentFileName = Object.keys(files_list)[checked_file_i]
 var currentFile = null
+var demoSpr, demo
 
 function ge(id) {
     return document.getElementById(id)

@@ -33,8 +33,12 @@ class DiamondChunks extends DiamondFile {
         this.fileType = "chunks"
     }
 
-    parse(dec, r) {
-        // console.log("Whole file:", dec.join(" "))
+    /**
+     * @param _dec {number[]}
+     * @returns {number[][]}
+     */
+    static parseChunks(_dec) {
+        var dec = _dec.slice()
         var num_chunks = dec.shift()
         var chunk_data = dec.shiftTimes(num_chunks * 8) // num_chunks << 3 in ORIGINAL IMPLEMENTATION
         var chunks = []
@@ -42,6 +46,16 @@ class DiamondChunks extends DiamondFile {
             var address = arr2smallEndian(chunk_data.shiftTimes(4))
             var length = arr2smallEndian(chunk_data.shiftTimes(4))
             var chunk = dec.slice(address, address + length)
+            chunks.push(chunk)
+        }
+        return chunks
+    }
+
+    parse(dec, r) {
+        // console.log("Whole file:", dec.join(" "))
+        var chunks = DiamondChunks.parseChunks(dec)
+        for (var i = 0; i < chunks.length; i++) {
+            var chunk = chunks[i]
             var chunkDiv = document.createElement("div")
             var h1 = document.createElement("h1")
             h1.innerHTML = "Chunk " + (i + 1) + ": "
@@ -119,8 +133,6 @@ class DiamondChunks extends DiamondFile {
                 chunkDiv.innerHTML = "Error while parsing chunk: " + e
             }
             console.groupEnd()
-
-            chunks.push(chunk)
         }
         console.log("Parsed chunks:", chunks)
     }

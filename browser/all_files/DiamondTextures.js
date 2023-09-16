@@ -79,12 +79,13 @@ class DiamondTextures {
             if (palette.includes(undefined)) {
                 for (var pi = 0; pi < palette.length; pi++) if (!palette[pi]) {
                     palette[pi] = defaultPalette[pi]
+                    console.log("Encountered an unknown palette #", pi)
                 }
             }
             console.log("Palette:", palette)
             texture.aImage2D = null
             texture.aIntAndIntAndIntAndIntReturnVoid(paletteI, 0, -1, -1)
-            var graphics = new Graphics()
+            // var graphics = new Graphics()
             // texture.aGraphicsAndIntAndIntAndIntAndIntReturnVoid(graphics, 0, 0, 0, 0)
             // graphics.drawImage(texture.aImage2D[0][0], 10, 20, 0)
             var dimensions = texture.getFByte1D().slice()
