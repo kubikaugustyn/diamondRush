@@ -80,6 +80,9 @@ class DiamondMapPoint {
     render() {
         if (!this.symbols) return
         // console.log("Render point:", this)
+        /**
+         * @type {CanvasEngine2DImage}
+         */
         var image
         if (this.mapId === "angkor" && this.stageID === 8) {
             image = this.symbols.diamond.fire_crystal
@@ -95,8 +98,8 @@ class DiamondMapPoint {
             }
         }
         image.id = "point"
-        var w = image.data[0].length
-        var h = image.data.length
+        var w = image.data.width
+        var h = image.data.height
         var hw = Math.floor(w / 2)
         var hh = Math.floor(h / 2)
         var [x, y] = DiamondMapPointPosition2XY(this.x, this.y)
