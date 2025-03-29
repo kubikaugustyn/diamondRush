@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Diamond Rush All Files</title>
+    <script type="text/javascript" src="./CanvasEngine2D.js"></script>
+    <script type="module" src="./index.js"></script>
+    <link rel="stylesheet" href="./index.css">
+</head>
+<body>
+<div id="main-flexbox">
+    <form id="file_form">
+        <h2>Select a file</h2>
+        <fieldset id="file_list">
+            <legend>File name</legend>
+        </fieldset>
+        <input type="submit" value="Load" hidden/>
+    </form>
+    <div>
+        <form id="custom_file_form">
+            <h2>Load a custom file</h2>
+            <input type="file" name="file"/>
+            <input type="submit" value="Load"/>
+        </form>
+        <form id="file_config_form">
+            <h2>File configuration</h2>
+            <label>
+                <input type="checkbox" name="is_chunks">
+                Chunks
+            </label>
+            <fieldset id="file_type_list">
+                <legend>File/chunk type</legend>
+                <label><input type="radio" name="file_type" value="RAW">Raw</label>
+                <label><input type="radio" name="file_type" value="SPRITES" checked>Sprites</label>
+                <label><input type="radio" name="file_type" value="MAP">Map (map of stages)</label>
+                <label><input type="radio" name="file_type" value="STAGES">Stages (stage data)</label>
+                <label><input type="radio" name="file_type" value="TEXTS">Texts (localization)</label>
+                <label><input type="radio" name="file_type" value="DEMO_SPRITES" checked>demoSpr.bin sprites</label>
+                <label>
+                    <input type="radio" name="file_type" value="MIDI">
+                    <a href="https://en.wikipedia.org/wiki/MIDI#Computer_files" target="_blank">MIDI</a> (sound)
+                </label>
+                <label><input type="radio" name="file_type" value="PNG">PNG</label>
+            </fieldset>
+            <label>Render scale: <input type="number" name="render_scale" min="1" max="15" step="1"
+                                        value="2"></label><br>
+            <fieldset>
+                <legend>Sprites config</legend>
+                <label>Background color: <input type="color" name="sprites_background" value="#00FF00"></label><br>
+                <label>
+                    Show animation origin:
+                    <select size="1" name="sprites_animation_origin">
+                        <option value="hide" selected>Hide</option>
+                        <option value="origin_pixel">Origin point (pixel)</option>
+                        <option value="origin_cross">Origin point (cross)</option>
+                        <option value="block">Block</option>
+                    </select>
+                </label><br>
+                <label>Animation origin color: <input type="color" name="sprites_animation_origin_background"
+                                                      value="#FF0000"></label>
+            </fieldset>
+            <fieldset>
+                <legend>Stages config</legend>
+                <label>Render background layer: <input type="checkbox" name="stages_render_background"
+                                                       checked></label><br>
+                <label>Render player layer: <input type="checkbox" name="stages_render_player" checked></label><br>
+                <label>Render foreground layer: <input type="checkbox" name="stages_render_foreground"
+                                                       checked></label><br>
+                <label>Render special cases: <input type="checkbox" name="stages_render_special" checked></label><br>
+                <label>Render chest contents: <input type="checkbox" name="stages_render_chest_contents"
+                                                     checked></label><br>
+                <label>Render unknown blocks: <input type="checkbox" name="stages_render_unknown" checked></label><br>
+                <label>Render pot fan air: <input type="checkbox" name="stages_render_pot_fan_air" checked></label><br>
+            </fieldset>
+            <input type="submit" value="Load"/>
+        </form>
+    </div>
+    <div>
+        <h1>File contents</h1>
+        <div id="chunks"></div>
+    </div>
+</div>
+</body>
+</html>

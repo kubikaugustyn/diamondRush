@@ -1,0 +1,189 @@
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+canvas {
+    image-rendering: pixelated;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+th {
+    background-color: #004080; /* Darker blue */
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px;
+    border-bottom: 3px solid white;
+    text-align: left;
+}
+
+td {
+    padding: 8px;
+    border-bottom: 1px solid white;
+}
+
+tr {
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #99c2ff; /* Light blue */
+}
+
+tr:nth-child(odd) {
+    background-color: #66a3ff; /* Dark blue */
+}
+
+tr:nth-child(even):hover {
+    background-color: #3385ff;
+}
+
+tr:nth-child(odd):hover {
+    background-color: #0073e6;
+}
+
+#chunks {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 5px;
+}
+
+#chunks > .chunk {
+    border: 2px solid black;
+    padding: 2px;
+}
+
+#file_list, #file_type_list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 0;
+}
+
+body {
+    margin: 0;
+}
+
+#main-flexbox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 0;
+}
+
+#main-flexbox > #file_form,
+#main-flexbox > div:nth-of-type(1) {
+    background-color: #ddd;
+    padding: 5px;
+}
+
+#main-flexbox > div:nth-of-type(2) {
+    padding: 5px;
+}
+
+/* SPRITES */
+.sprite {
+}
+
+.sprite > .sprite-palettes {
+}
+
+.sprite > .sprite-palettes > .sprite-palette {
+}
+
+.sprite > .sprite-modules,
+.sprite > .sprite-frames,
+.sprite > .sprite-animations {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 5px;
+}
+
+.sprite > .sprite-modules > .sprite-module > canvas:not(:only-of-type):not(:last-child),
+.sprite > .sprite-frames > .sprite-frame > canvas:not(:only-of-type):not(:last-child),
+.sprite > .sprite-animations > .sprite-animation > canvas:not(:only-of-type):not(:last-child) {
+    padding-right: 5px;
+}
+
+.sprite > .sprite-modules {
+}
+
+.sprite > .sprite-modules > .sprite-module {
+    border: 1px solid black;
+    padding: 1px;
+}
+
+.sprite > .sprite-frame-modules {
+}
+
+.sprite > .sprite-frame-modules > .sprite-frame-module {
+    border: 1px solid black;
+    margin-bottom: 2px;
+}
+
+.sprite > .sprite-frames {
+}
+
+.sprite > .sprite-frames > .sprite-frame {
+    border: 1px solid black;
+    padding: 1px;
+}
+
+.sprite > .sprite-animation-frames {
+}
+
+.sprite > .sprite-animation-frames > .sprite-animation-frame {
+}
+
+.sprite > .sprite-animations {
+}
+
+.sprite > .sprite-animations > .sprite-animation {
+    border: 1px solid black;
+    padding: 1px;
+}
+
+/* STAGES */
+.stages {
+}
+
+.stages > .stage {
+}
+
+/* RAW */
+.raw-line {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+    gap: 5px;
+}
+
+.raw-line > pre {
+    margin: 0;
+}
+
+.raw-line > .raw-divider {
+    width: 2px;
+    background-color: black;
+}
