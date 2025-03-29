@@ -12,7 +12,7 @@ import {parse as parseDemoSprites, render as renderDemoSprites} from "./file_typ
 import {parse as parseStages, render as renderStages} from "./file_types/stages.js";
 import {parse as parseRaw, render as renderRaw} from "./file_types/raw.js";
 import {FileType} from "./files.js";
-import {createElement} from "./utils.js";
+import {createElement, downloadRawButton} from "./utils.js";
 
 /**
  * @typedef {any} TParsedDataData
@@ -188,8 +188,16 @@ export class FileChunk {
                 break
         }
 
+        const fileExtension = new Map([
+            [FileType.SPRITES, "sprite"],
+            [FileType.MAP, "game"],
+            [FileType.STAGES, "aTLMap"], // Tiled Layer Map file
+        ]).get(this.type) || "bin"
+
         return createElement("div", [
-            createElement("h1", `Chunk ${this.index + 1}`),
+            this.index !== -1 && createElement("h1", `Chunk ${this.index + 1}`),
+            this.index !== -1 && downloadRawButton(this.data, `chunk${this.index}.${fileExtension}`, "Download chunk contents"),
+            this.index !== -1 && createElement("br"),
             parsedData.container,
         ], {"class": "chunk"})
     }

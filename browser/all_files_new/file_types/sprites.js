@@ -73,8 +73,8 @@ export class BSprite {
 
         /**
          * @param moduleIndex {uint8_t}
-         * @param offsetX {uint8_t}
-         * @param offsetY {uint8_t}
+         * @param offsetX {int8_t}
+         * @param offsetY {int8_t}
          * @param flags {uint8_t}
          */
         constructor(moduleIndex, offsetX, offsetY, flags) {
@@ -89,7 +89,7 @@ export class BSprite {
         frameModuleCount
         /** @type {uint16_t} */
         firstFrameModuleIndex
-        /** @type {{x: uint8_t, y: uint8_t, w: uint8_t, h: uint8_t}} */
+        /** @type {{x: int8_t, y: int8_t, w: uint8_t, h: uint8_t}} */
         bbox
         /** @type {CanvasEngine2DImageData[]|null} */
         #parsedData
@@ -97,7 +97,7 @@ export class BSprite {
         /**
          * @param frameModuleCount {uint8_t}
          * @param firstFrameModuleIndex {uint16_t}
-         * @param bbox {{x: uint8_t, y: uint8_t, w: uint8_t, h: uint8_t}}
+         * @param bbox {{x: int8_t, y: int8_t, w: uint8_t, h: uint8_t}}
          */
         constructor(frameModuleCount, firstFrameModuleIndex, bbox) {
             this.frameModuleCount = frameModuleCount

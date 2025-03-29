@@ -134,11 +134,22 @@ async function loadAndOpenCurrentFile() {
             return (await parseFileAndItsChunks(file)).chunks
         },
     }
-
     const chunksDiv = document.getElementById("chunks")
-    chunksDiv.innerHTML = ""
+    const expectLongRender = ["w0.bin", "w1.bin", "w2.bin", "o.f"].includes(currentFile.fileName)
+
+    // UI stuff
+    chunksDiv.innerHTML = "Loading..."
+    await currentFile.loadData() // Not necessary
+    chunksDiv.innerHTML = "Parsing..."
+    await new Promise(resolve => setTimeout(resolve, expectLongRender ? 50 : 0)) // Let HTML render
 
     const {chunks, errors} = await parseFileAndItsChunks(currentFile)
+
+    chunksDiv.innerHTML = "Rendering..."
+    await new Promise(resolve => setTimeout(resolve, expectLongRender ? 50 : 0)) // Let HTML render
+    await Promise.all(chunks.map(chunk => chunk.render(config)))
+    chunksDiv.innerHTML = ""
+
     for (let i = 0; i < chunks.length; i++) {
         const chunk = chunks[i]
         const error = errors[i]

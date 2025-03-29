@@ -20,7 +20,7 @@ export function createElement(tagName, content = null, attributes = null) {
         if (typeof content === "string")
             element.innerText = content;
         else
-            content.forEach(child => element && element.appendChild(child));
+            content.forEach(child => (child instanceof HTMLElement || child instanceof Text) && element.appendChild(child));
     }
 
     return element;
