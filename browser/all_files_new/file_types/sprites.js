@@ -130,9 +130,9 @@ export class BSprite {
         frameIndex
         /** @type {uint8_t} */
         time
-        /** @type {uint8_t} */
+        /** @type {int8_t} */
         offsetX
-        /** @type {uint8_t} */
+        /** @type {int8_t} */
         offsetY
         /** @type {uint8_t} */
         flags
@@ -140,8 +140,8 @@ export class BSprite {
         /**
          * @param frameIndex {uint8_t}
          * @param time {uint8_t}
-         * @param offsetX {uint8_t}
-         * @param offsetY {uint8_t}
+         * @param offsetX {int8_t}
+         * @param offsetY {int8_t}
          * @param flags {uint8_t}
          */
         constructor(frameIndex, time, offsetX, offsetY, flags) {
@@ -253,8 +253,6 @@ export class BSprite {
         const frameFModuleCounts = new Array(frameCount),
             frameFirstModuleIndices = new Array(frameCount)
         for (let i = 0; i < frameCount; i++) {
-            // TODO Why is it 2 bytes when the bsprite_format.txt file says it's 1 byte?
-            // frameFModuleCounts[i] = dataView.getUint8(ptr++)
             frameFModuleCounts[i] = dataView.getUint16(ptr, true)
             ptr += 2
 
@@ -276,7 +274,7 @@ export class BSprite {
         ptr += 2
         this.animationFrames = new Array(animationFramesCount)
         for (let i = 0; i < animationFramesCount; i++) {
-            this.animationFrames[i] = new BSprite.AnimationFrame(dataView.getUint8(ptr++), dataView.getUint8(ptr++), dataView.getUint8(ptr++), dataView.getUint8(ptr++), dataView.getUint8(ptr++))
+            this.animationFrames[i] = new BSprite.AnimationFrame(dataView.getUint8(ptr++), dataView.getUint8(ptr++), dataView.getInt8(ptr++), dataView.getInt8(ptr++), dataView.getUint8(ptr++))
         }
 
         const animationCount = dataView.getUint16(ptr, true)
@@ -448,7 +446,7 @@ export class BSprite {
                 }
                 break
             }
-            // ???
+            // I4 - "indexed, max 4 colors, 4 pixels / 1 byte, 2 bits/pixel"
             case 0x0400:
                 for (let j = 0; j < pixelData.length;) {
                     const packed = packedData.getUint8(j >> 2)
