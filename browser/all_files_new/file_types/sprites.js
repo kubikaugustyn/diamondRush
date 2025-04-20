@@ -339,7 +339,6 @@ export class BSprite {
             for (let colorI = 0; colorI < this.colorsPerPalette; colorI++) {
                 // 0xARGB - every nibble means the number of bits (0-8) per channel
                 // console.log("Pixel format:", this.pixelFormat.toString(16))
-                // TODO Are the channel bytes parsed all in the correct order?
                 switch (this.pixelFormat) {
                     case 0x8888:
                         // All channels are 8-bit
@@ -351,22 +350,22 @@ export class BSprite {
                     case 0x0888:
                         // All channels are 8-bit, but the A (alpha) channel is not present
                         A = 0xFF
-                        R = dataView.getUint8(ptr++)
-                        G = dataView.getUint8(ptr++)
                         B = dataView.getUint8(ptr++)
+                        G = dataView.getUint8(ptr++)
+                        R = dataView.getUint8(ptr++)
                         break
                     case 0x4444: {
                         // All channels are 4-bit, where the 4-bit number is duplicated twice to get the resulting 8 bits
-                        const packed = dataView.getUint16(ptr, false)
+                        const packed = dataView.getUint16(ptr, true)
                         ptr += 2
-                        A = (packed & 0xF000) >> 16
-                        A |= A >> 8
-                        R = (packed & 0x0F00) >> 8
-                        R |= R >> 8
+                        A = (packed & 0xF000) >> 8
+                        A |= A >> 4
+                        R = (packed & 0x0F00) >> 4
+                        R |= R >> 4
                         G = (packed & 0x00F0) >> 0
-                        G |= G >> 8
-                        B = (packed & 0x000F) << 8
-                        B |= B >> 8
+                        G |= G >> 4
+                        B = (packed & 0x000F) << 4
+                        B |= B >> 4
                         break
                     }
                     case 0x1555: {
@@ -380,12 +379,29 @@ export class BSprite {
                         B = (packed & 0x001F) << 3
                         break
                     }
-                    case 0x0565:
-                        throw new Error("Pixel format not implemented: 0x0565")
-                    // break
-                    case 0x0332:
-                        throw new Error("Pixel format not implemented: 0x0332")
-                    // break
+                    case 0x0565: {
+                        // The R and B channels are 5-bit, and the G channel is 6-bit
+                        // The transparent color is rgb(248,0,248)
+                        // For the color channels the lower unused bits are filled with zero
+                        const packed = dataView.getUint16(ptr, true)
+                        ptr += 2
+                        A = (packed === 0xF81F) ? 0x00 : 0xFF
+                        R = (packed & 0xF800) >> 8
+                        G = (packed & 0x07E0) >> 3
+                        B = (packed & 0x001F) << 3
+                        break
+                    }
+                    case 0x0332: {
+                        // The R and G channels are 3-bit, and the B channel is 2-bit
+                        // The transparent color is rgb(192,0,0)
+                        // For the color channels the lower unused bits are filled with zero
+                        const packed = dataView.getUint8(ptr++)
+                        A = (packed === 0xC0) ? 0x00 : 0xFF
+                        R = (packed & 0xE0) >> 0
+                        G = (packed & 0x1C) << 3
+                        B = (packed & 0x03) << 6
+                        break
+                    }
                     default:
                         throw new Error(`Unknown pixel format ${this.pixelFormat.toString(16)}`)
                 }
@@ -423,7 +439,7 @@ export class BSprite {
                     pixelData[j + 1] = palette[index2]
                 }
                 break
-            // I256RLE? according to bsprite_format.txt - "maximum 256 colors (indexed), compressed data (RLE)"
+            // I127RLE according to bsprite_format.txt - "maximum 127 colors (indexed), compressed data (RLE)"
             case 0x27F1: {
                 let j = 0, packedPtr = 0
                 while (j < pixelData.length) {
@@ -446,7 +462,7 @@ export class BSprite {
                 }
                 break
             }
-            // I4 - "indexed, max 4 colors, 4 pixels / 1 byte, 2 bits/pixel"
+            // I4 according to bsprite_format.txt - "indexed, max 4 colors, 4 pixels / 1 byte, 2 bits/pixel"
             case 0x0400:
                 for (let j = 0; j < pixelData.length;) {
                     const packed = packedData.getUint8(j >> 2)
