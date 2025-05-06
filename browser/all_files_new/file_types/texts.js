@@ -14,17 +14,16 @@ export async function parse(chunk) {
     const textDecoder = new TextDecoder("utf-8", {fatal: true, ignoreBOM: false})
 
     const dataView = new DataView(chunk.data)
+    const offsetLength = dataView.getUint16(0)
     let ptr = 0
 
     /** @type {string[]} */
     const texts = []
-    while (ptr < dataView.byteLength) {
+    while (ptr < offsetLength) {
         const textAddress = dataView.getUint16(ptr)
         ptr += 2
 
         const textLength = dataView.getUint16(textAddress)
-        if (textLength === 1 && dataView.getUint8(textAddress + 2) === 0x30)
-            break // The last text is "0"
         const text = textDecoder.decode(dataView.buffer.slice(textAddress + 2, textAddress + 2 + textLength))
         texts.push(text)
     }
