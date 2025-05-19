@@ -16,15 +16,20 @@ export async function parse(chunk) {
     const dataView = new DataView(chunk.data)
     let ptr = 0
 
+    const textsCount = dataView.getUint16(ptr) >> 1
+
     /** @type {string[]} */
     const texts = []
-    while (ptr < dataView.byteLength) {
+    while (texts.length < textsCount && ptr < dataView.byteLength) {
         const textAddress = dataView.getUint16(ptr)
         ptr += 2
 
         const textLength = dataView.getUint16(textAddress)
-        if (textLength === 1 && dataView.getUint8(textAddress + 2) === 0x30)
-            break // The last text is "0"
+
+        // The last text "0" isn't for saying where the end is, but rather it is an enum for the alignment of the state title - "0" -> left, "1" -> right
+        // if (textLength === 1 && dataView.getUint8(textAddress + 2) === 0x30)
+        //     break // The last text is "0"
+
         const text = textDecoder.decode(dataView.buffer.slice(textAddress + 2, textAddress + 2 + textLength))
         texts.push(text)
     }
@@ -38,7 +43,7 @@ export async function parse(chunk) {
  * @param config {TParseConfig}
  * @return {Promise<HTMLElement>}
  */
-export async function render(chunk, parsed,config) {
+export async function render(chunk, parsed, config) {
     /** @type {string[]} */
     const texts = parsed.texts
 
